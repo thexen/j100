@@ -12,7 +12,7 @@ var _naviSeed = function( ) {
                 dex: 'newsSwap',
                 contract:   '0xd49797b8E0A402BE748Fd07991A623912629587C',
                 fee:        0.03,
-            }
+            },
         },
         {
             pair: [ '0x658a3a6065E16FE42D8a51CC00b0870e850909F5', '0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e' ],
@@ -20,7 +20,7 @@ var _naviSeed = function( ) {
                 dex: 'newsSwap',
                 contract:   '0x54A0E6d498F16dBc63e6a1E5DB4b4F9F8D605C30',
                 fee:        0.03,
-            }            
+            },
         },
         {
             pair: [ '0xAeEa7333B0658158121FAbDB579d49DD10b57950', '0x0000000000000000000000000000000000000000' ],
@@ -28,10 +28,8 @@ var _naviSeed = function( ) {
                 dex: 'newsSwap',
                 contract:   '0xbDCDD585A2d147f3DAb0eeBBa22d5A09a07c2b4d',
                 fee:        0.03,
-            }  
-        },
-        
-
+            },
+        }     
     ];
 }
 
@@ -137,7 +135,7 @@ var _getSwapPoolRoutes = function( from, to, waypointCount, debug ) {
     }    
 }
 
-var _discoverySwapRoute = function( from, to, waypointCount, inqueryAssets ) {
+var _discoverySwapRoute = function( from, to, waypointCount ) {
 
     var swapRoutes = {
         swap_route:     undefined,
@@ -162,28 +160,6 @@ var _discoverySwapRoute = function( from, to, waypointCount, inqueryAssets ) {
                 for( var j=0; j<swapPools.length; j++ ) {
                     if( ( swapPools[j].pair[0] == swapRoutes.swap_route[i][k][0] || swapPools[j].pair[1] == swapRoutes.swap_route[i][k][0] ) 
                         && ( swapPools[j].pair[0] == swapRoutes.swap_route[i][k][1] || swapPools[j].pair[1] == swapRoutes.swap_route[i][k][1] ) ){
-                        
-                        /*
-                        var info = {}
-                        info[ 'pool' ]      = swapPools[j].pool;
-                        info[ 'from' ]      = { token: swapRoutes.swap_route[i][k][0], balance: _getBalance( swapPools[j].pool ) };
-                        info[ 'to' ]        = { token: swapRoutes.swap_route[i][k][1], balance: _getBalance( swapPools[j].pool ) };
-                        info[ 'rating' ]    = ( ( info.to.balance * ( 1 - swapPools[j].pool.fee ) ) 
-                                                    / info.from.balance );
-                        //같은 종류의 swap pool이 존재 한다면 교환 비율이 높은 pool로 변경 한다.
-                        if( bFound ) {
-                            if( swapRoutes.swap_route[i][k][2].rating < info.rating ) {
-                                swapRoutes.swap_route[i][k][2] = info;
-                            }
-                        } else {
-                            swapRoutes.swap_route[i][k].push( info );
-                        }
-                        */
-
-                        
-                        [firstTokenAmount, secondtokenAmount] = inqueryAssets( swapPools[j].pool );
-                        console.log( firstTokenAmount );
-                        console.log( secondtokenAmount );
                         var info = {}
                         info[ 'pool' ]      = swapPools[j].pool;
                         info[ 'from' ]      = { token: swapRoutes.swap_route[i][k][0], balance: 0 };
@@ -191,34 +167,21 @@ var _discoverySwapRoute = function( from, to, waypointCount, inqueryAssets ) {
                         info[ 'rating' ]    = 0;
                         if( !bFound ) {
                             swapRoutes.swap_route[i][k].push( info );
-                        } 
+                        } else {
+                            console.log("execptions...found sampe swap pool");
+                        }
                         bFound = true;
                     }    
                 }
-                if( bFound ) {
-                    if( k == 0 ) {
-                        naviSwapRaing = swapRoutes.swap_route[i][k][2].rating;
-                    } else {
-                        naviSwapRaing = naviSwapRaing * swapRoutes.swap_route[i][k][2].rating;
-                    }
-                } else {
+                if( !bFound ) {
+                    //단절
                     break;
                 }                
                 if( swapRoutes.swap_route[i][k].length > 3 ) {
                     throw( swapRoutes.swap_route[i][k] );
                 }
             }
-            if( bFound ) {
-                swapRoutes.swap_route[i]['rating'] = naviSwapRaing;
-                if( swapRoutes.best_route == undefined ) {
-                    swapRoutes.best_route    = swapRoutes.swap_route[i];
-                    swapRoutes.worst_route   = swapRoutes.swap_route[i];
-                } else if ( swapRoutes.best_route.rating < swapRoutes.swap_route[i].rating ) {
-                    swapRoutes.best_route = swapRoutes.swap_route[i];
-                } else if ( swapRoutes.worst_route.rating > swapRoutes.swap_route[i].rating ) {
-                    swapRoutes.worst_route = swapRoutes.swap_route[i];
-                }
-            } else {
+            if( !bFound ) {
                 swapRoutes.swap_route.splice( i, 1 );
                 i--;
             }
@@ -236,10 +199,10 @@ var _discoverySwapRoute = function( from, to, waypointCount, inqueryAssets ) {
     }
 }
 
-var _discoveryMiddleRoutes = function( from, to, waypointCount, inqueryAssets ) {
+var _discoveryFirstMiddleRoute = function( from, to, waypointCount ) {
     try{
         var exploredRoute = [];
-        var exploredswapRoutes = _discoverySwapRoute( from, to, waypointCount, inqueryAssets );
+        var exploredswapRoutes = _discoverySwapRoute( from, to, waypointCount );
         if( exploredswapRoutes.swap_route[0].length > 1 ) {
             for( var i=0; i<exploredswapRoutes.swap_route[0].length-1; i++ ){
                 exploredRoute.push( exploredswapRoutes.swap_route[0][i][2].to.token );
@@ -249,15 +212,37 @@ var _discoveryMiddleRoutes = function( from, to, waypointCount, inqueryAssets ) 
     } catch( e ){
         throw Error( e.message );
     } finally {
-        exploredRoute   = undefined;
+        exploredswapRoutes  = undefined;
+        exploredRoute       = undefined;
     }        
 }
 
-/*
-function main() {
-  var route = _discoveryMiddleRoutes( '0x21CB1A627380BAdAeF180e1346479d242aca90D3', '0x658a3a6065E16FE42D8a51CC00b0870e850909F5', 2 );
-  console.log( route );
+var _discoveryMiddleRoutes = function( from, to, waypointCount ) {
+    try{
+        var exploredRoutes = [];
+        var exploredswapRoutes = _discoverySwapRoute( from, to, waypointCount );
+        for( var i=0; i<exploredswapRoutes.swap_route.length; i ++ ){
+            var exploredRoute = [];
+            if( exploredswapRoutes.swap_route[i].length > 1 ) {
+                for( var k=0; k<exploredswapRoutes.swap_route[i].length-1; k++ ){
+                    exploredRoute.push( exploredswapRoutes.swap_route[i][k][2].to.token );
+                }
+            }
+            exploredRoutes.push( exploredRoute );
+            exploredRoute = undefined;
+        }
+        return exploredRoutes;
+    } catch( e ){
+        throw Error( e.message );
+    } finally {
+        exploredswapRoutes  = undefined;
+        exploredRoutes      = undefined;
+    }          
 }
-*/
 
-module.exports.DiscoveryMiddleRoute  = _discoveryMiddleRoutes;
+//모든 중간 경로의 swap pool 정보 구하기
+module.exports.DiscoveryRoutes                  = _discoverySwapRoute;
+//모든 중간 경로중 처음 발견된 경로 구하기
+module.exports.DiscoveryFirstMiddleiRoute       = _discoveryFirstMiddleRoute;
+//모든 중간 경로 구하기
+module.exports.DiscoveryMiddleiRoutes           = _discoveryMiddleRoutes;

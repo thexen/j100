@@ -8,7 +8,7 @@ const Caver = require("caver-js");
 const { OpenWalletFromPrivateKey, OpenWalletFromKeystoreV3, OpenWalletFromMnemonic, OpenHDWallet } = require( '../wallet/import.js' );
 const { KlaySendTransaction } = require( "../wallet/sendtx.js")
 const { AbiEncode } = require ( '../utils/abi.js' )
-const { DiscoveryMiddleRoute } = require ( '../routing/swapHelpRouter.js' )
+const { DiscoveryFirstMiddleiRoute, DiscoveryRoutes, DiscoveryMiddleiRoutes } = require ( '../routing/swapHelpRouter.js' )
 
 const netWork         = "https://kaikas.baobab.klaytn.net:8651";
 const swapHolder      = "0x659aCd70df7e021302aA2907FE1Dbb7eE50DBc38";
@@ -27,7 +27,6 @@ async function klayExpectedReceipt( from, amount, to, route ) {
     const val = await caver.klay.call({
       to: swapHolder, 
       data: data,});
-      console.log( val );
     var dec = caver.klay.abi.decodeParameter( 'uint256', val );
     return dec;
   } catch( e ) {
@@ -86,18 +85,17 @@ async function exchange(from, amount, to, minimum, route ) {
 
 async function inqueryAssets( swapPool ) {
 
-  const caver = new Caver(netWork);
-
   try{
-    var data = caver.klay.abi.encodeFunctionSignature( "inqueryAssets()" );
-    const val = await caver.klay.call({
-      to: swapPool, 
-      data: data,
-    });
-    var obj = caver.klay.abi.decodeParameters( ['uint256','uint256'], val );
-    console.log( JSON.stringify( obj, null, 2 ) );
-    console.log( obj["0"] );
-    console.log( obj["1"] );
+      //TODO
+      const caver = new Caver(netWork);
+      var data = caver.klay.abi.encodeFunctionSignature( "inqueryAssets()" );
+      const val = await caver.klay.call({
+        to: swapPool.pool.contract, 
+        data: data,
+      });
+      var obj = caver.klay.abi.decodeParameters( ['uint256','uint256'], val );
+
+      return [ obj["0"], obj["1"] ];
   } catch( e ) {
     console.log(e)
   } finally {
@@ -105,52 +103,58 @@ async function inqueryAssets( swapPool ) {
 
 }
 
-inqueryAssets( "0x9A3a88729913267DEC84c3aac09499BD816f8DA4" );
+//inqueryAssets( "0x9A3a88729913267DEC84c3aac09499BD816f8DA4" );
 
 async function routerTest() {
 
-    var expectedValue = await klayExpectedReceipt( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
-                          , 1000000000 
-                          , "0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e"
-                          , [] );
-    console.log( expectedValue );      
-
-    var middleRoutes    = DiscoveryMiddleRoute( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
-                          , "0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e"
-                          , 5
-                          , inqueryAssets );
+    //처음 중간 경로 구하기 
+    var middleRoute    = DiscoveryFirstMiddleiRoute( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
+                          , "0x658a3a6065E16FE42D8a51CC00b0870e850909F5"
+                          , 5 );
+    console.log( middleRoute );                          
     
-    console.log( ">>>>" + middleRoutes.length );                                        
+    //모든 경로의 swap pool 정보 구하기
+    var routes    = DiscoveryRoutes( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
+                          , "0x658a3a6065E16FE42D8a51CC00b0870e850909F5"
+                          , 5 );
+    console.log( JSON.stringify( routes, null, 2 ) );        
+        
+    //모든 중간 경로 구하기
+    var middleRoutes    = DiscoveryMiddleiRoutes( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
+                          , "0x658a3a6065E16FE42D8a51CC00b0870e850909F5"
+                          , 5 );
+    console.log( JSON.stringify( middleRoutes, null, 2 ) );       
 
+    //교환시 받을 수 있는 token 수량 구하기
     var expectedValue   = await klayExpectedReceipt( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
                           , 1000000000 
-                          , "0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e"
-                          , middleRoutes );
-    console.log( expectedValue );                                        
+                          , "0x658a3a6065E16FE42D8a51CC00b0870e850909F5"
+                          , middleRoute );
+    console.log( "expectedValue" + expectedValue );                                        
 
 }
-//routerTest(); 
+routerTest(); 
 
 
 //klayBalanceOf( "0x21CB1A627380BAdAeF180e1346479d242aca90D3", "0xFf8EF2b0054Edf1A722186CE62BBE4323951e99B" );
 //klayBalanceOf( "0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e", "0xFf8EF2b0054Edf1A722186CE62BBE4323951e99B" );
 
 async function main() {
-  var middleRoutes  = DiscoveryMiddleRoute( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
+  var middleRoute  = DiscoveryFirstMiddleiRoute( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
                                     , "0x658a3a6065E16FE42D8a51CC00b0870e850909F5"
                                     , 5 );
   
   var expectedValue = await klayExpectedReceipt( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
                     , 1000000000 
                     , "0x658a3a6065E16FE42D8a51CC00b0870e850909F5"
-                    , middleRoutes );
-    console.log( expectedValue );                                        
+                    , middleRoute );
+  console.log( "expectedValue" + expectedValue );                                        
   
   await exchange( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
         , 1000000000
         , "0x658a3a6065E16FE42D8a51CC00b0870e850909F5"
         , 19999601
-        , middleRoutes );
+        , middleRoute );
 
 }
 //main();      
