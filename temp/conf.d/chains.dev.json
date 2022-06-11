@@ -1,0 +1,50 @@
+{
+    "mongodb": {
+        "datasource": "mongodb://192.168.10.111:27017,192.168.10.113:27017,192.168.10.112:27017/test_db",
+        "replicaset": "rs0",
+        "auth": {
+            "source": "admin",
+            "user": "testuser",
+            "pwd": "abcd0110"
+        },
+        "connection":{
+            "timeout": 5000,
+            "pool": 5
+        }
+    },
+    "redis": {
+        "pwd": "abcd0110",
+        "sentinel": {
+            "name": "mymaster",
+            "pwd": "abcd0110",
+            "hosts": [
+                { "host": "192.168.10.111", "port": 26379 },
+                { "host": "192.168.10.112", "port": 26379 },
+                { "host": "192.168.10.113", "port": 26379 }
+            ]
+        }
+    },
+    "elasticsearch":{
+
+    },
+    "quorum": {
+        "rpcurl": "http://10.10.11.11:22000",
+        "contracts": [
+            {
+                "name": "did",
+                "address": "0x8A5a7e2b555bb27356167b531f8Aa0354a58a16a",
+                "abi": [{"constant":false,"inputs":[{"name":"key","type":"string"},{"name":"value","type":"string"}],"name":"invoke","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getVersion","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"key","type":"string"}],"name":"get","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"strVersion","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]
+            },
+            {
+                "name": "schemas",
+                "address": "0xbeE8982e44C4bB124164435E95993ca0a305121d",
+                "abi": [{"constant":false,"inputs":[{"name":"key","type":"string"},{"name":"value","type":"string"}],"name":"invoke","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getVersion","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"key","type":"string"}],"name":"get","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"strVersion","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]
+            },
+            {
+                "name": "creddefs",
+                "address": "0x48a49ec4024A02B2fE70Ec54B3DF1CE598e0c477",
+                "abi": [{"constant":false,"inputs":[{"name":"key","type":"string"},{"name":"value","type":"string"}],"name":"invoke","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getVersion","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"key","type":"string"}],"name":"get","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"strVersion","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]
+            }
+        ]
+    }
+  } 

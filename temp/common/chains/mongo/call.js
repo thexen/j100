@@ -1,0 +1,173 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//
+//
+//npm install mongodb@3.6.9
+//MongoDB Server 4.4.6
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+const { MongoClient, ReadPreference } = require('mongodb');
+const {MONGODBCONF} = require('../../../config/chain');
+
+/*
+const mongoHost = 'mongodb://192.168.10.111:27017,192.168.10.113:27017,192.168.10.112:27018/test_db';
+//const mongoHost = 'mongodb://192.168.10.112:27017/test_db';
+const mongoUser = 'testuser';
+const mongoPwd  = 'abcd0110';
+const mongoConnTimeout  = 5000;
+const mongoConnPool     = 5;
+const mongoReplicaSet   = 'rs0'
+
+const client = new MongoClient(mongoHost, {
+    authSource: 'admin',
+    auth: {
+        user: mongoUser, 
+        password: mongoPwd
+    },
+    replicaSet: mongoReplicaSet,
+    readPreference: ReadPreference.PRIMARY_PREFERRED,
+    poolSize: mongoConnPool,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: mongoConnTimeout
+});
+*/
+
+const client = new MongoClient( MONGODBCONF.datasource, {
+    authSource: MONGODBCONF.auth.source,
+    auth: {
+        user: MONGODBCONF.auth.user, 
+        password: MONGODBCONF.auth.pwd
+    },
+    replicaSet: MONGODBCONF.replicaset,
+    poolSize: MONGODBCONF.connpool,
+    serverSelectionTimeoutMS: MONGODBCONF.conntimeout,
+    readPreference: ReadPreference.PRIMARY_PREFERRED,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+
+async function _connect() {
+    if( !client.isConnected() ){
+        console.log("not connected to MongoDB!!!")
+        console.log("connecting to MongoDB...")
+        await client.connect();
+    }
+}
+
+async function _getFromMongo( _collection, _id ) {
+    await _connect();
+    const databse = client.db();
+    const collection = databse.collection(_collection);
+    try{
+        return await collection.findOne( {_id: _id} );
+    } finally {
+    }
+}
+
+async function _upsertToMongo( _collection, _id, _doc ) {
+    await _connect();
+    const databse = client.db();
+    const collection = databse.collection(_collection);
+    try{
+        return await collection.updateOne( {_id: _id}, {$set: {_timestamp: new Date(Date.now()), _source: ( typeof _doc == 'string' )? JSON.parse( _doc ) : _doc }}, {upsert: true});
+    } finally {
+    }
+}
+
+async function _insertToMongo( _collection, _id, _doc ) {
+    await _connect();
+    const databse = client.db();
+    const collection = databse.collection(_collection);
+    try{
+        return await collection.insertMany( [{_id: _id, _timestamp: new Date(Date.now()), _source: ( typeof _doc == 'string' )? JSON.parse( _doc ) : _doc }]);
+    } finally {
+    }
+}
+
+async function _updateToMogo( _collection, _query, _doc ) {
+    await _connect();
+    const databse = client.db();
+    const collection = databse.collection(_collection);
+    try{
+        return await collection.updateOne( ( typeof _query == 'string' )? JSON.parse( _query ) : _query, 
+                                       {$set: ( typeof _doc == 'string' )? JSON.parse( _doc ) : _doc });
+    } finally {
+    }
+}
+
+async function _deleteFromMongo( _collection, _id ) {
+    await _connect();
+    const databse = client.db();
+    const collection = databse.collection(_collection);
+    try{
+        return await collection.deleteOne( {_id: _id} );
+    } finally {
+    }
+}
+
+async function _queryFromFromMongo( _collection, _dslQuery ) {
+    await _connect();
+    const databse = client.db();
+    const collection = databse.collection(_collection);
+
+    let value       = undefined;
+    let sliceTemp   = [];
+    try{
+        if( _dslQuery == undefined ){
+            throw Error( 'Requered DSLQuery.' );
+        }
+    
+        let methods = Object.keys( _dslQuery );
+        if( methods.length != 1 ){
+            throw Error( 'Method must one in DSLQuery.' );
+        }
+
+		if( methods[0] == 'findone' ){
+            value      = await collection.findOne( _dslQuery.findone );
+            if( value == undefined ){
+                return undefined;
+            }
+            return value._source;
+		} else if ( methods[0] == 'find' ){
+
+            if( _dslQuery.find['$and'] != undefined ) {
+                for( var i=0; i<_dslQuery.find['$and'].length; i++ ){
+                    if( Object.keys( _dslQuery.find['$and'][i] ) == '_timestamp' ){
+                        for( var key in _dslQuery.find['$and'][i]._timestamp ){
+                            _dslQuery.find['$and'][i]._timestamp[key] = new Date(new Date(_dslQuery.find['$and'][i]._timestamp[key]))
+                        }
+                    }
+                }
+            }
+
+            cursor = collection.find( _dslQuery.find );
+            if( await cursor.count() == 0 ){
+                return undefined
+            }
+            while( await cursor.hasNext() ) {
+                value = await cursor.next()
+                sliceTemp.push( {
+                    _id: value._id, 
+                    _timestamp: value._timestamp,
+                    _source: value._source 
+                });
+            }
+
+            return sliceTemp;
+		} else {
+		    throw Error( 'DSLQuery Method is not define' );		
+        }
+        
+    } finally {
+        sliceTemp   = undefined;
+        value       = undefined;
+    }
+}
+
+module.exports.InsertToMongo = _insertToMongo;
+module.exports.UpsertToMongo = _upsertToMongo;
+module.exports.GetFromMongo = _getFromMongo;
+module.exports.DeleteFromMongo = _deleteFromMongo;
+module.exports.QueryFromMongo = _queryFromFromMongo;
+module.exports.UpdateFromMongo = _updateToMogo;

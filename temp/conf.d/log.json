@@ -1,0 +1,10 @@
+{
+    "log": {
+        "path-L": "/var/log/publish/dplatform",
+        "path": "D:/temp/access",
+        "name": "access.log",
+        "format": ":date[clf] :remote-addr :remote-user :method :url :status :res[content-length] :response-time ms",
+        "rotation": 10,
+        "interval": "1d"
+    }
+} 
