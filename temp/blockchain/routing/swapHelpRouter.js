@@ -137,7 +137,7 @@ var _getSwapPoolRoutes = function( from, to, waypointCount, debug ) {
     }    
 }
 
-var _discoverySwapRoute = function( from, to, waypointCount ) {
+var _discoverySwapRoute = function( from, to, waypointCount, inqueryAssets ) {
 
     var swapRoutes = {
         swap_route:     undefined,
@@ -180,6 +180,10 @@ var _discoverySwapRoute = function( from, to, waypointCount ) {
                         }
                         */
 
+                        
+                        [firstTokenAmount, secondtokenAmount] = inqueryAssets( swapPools[j].pool );
+                        console.log( firstTokenAmount );
+                        console.log( secondtokenAmount );
                         var info = {}
                         info[ 'pool' ]      = swapPools[j].pool;
                         info[ 'from' ]      = { token: swapRoutes.swap_route[i][k][0], balance: 0 };
@@ -232,10 +236,10 @@ var _discoverySwapRoute = function( from, to, waypointCount ) {
     }
 }
 
-var _discoveryMiddleRoutes = function( from, to, waypointCount ) {
+var _discoveryMiddleRoutes = function( from, to, waypointCount, inqueryAssets ) {
     try{
         var exploredRoute = [];
-        var exploredswapRoutes = _discoverySwapRoute( from, to, waypointCount );
+        var exploredswapRoutes = _discoverySwapRoute( from, to, waypointCount, inqueryAssets );
         if( exploredswapRoutes.swap_route[0].length > 1 ) {
             for( var i=0; i<exploredswapRoutes.swap_route[0].length-1; i++ ){
                 exploredRoute.push( exploredswapRoutes.swap_route[0][i][2].to.token );
