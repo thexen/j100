@@ -16,7 +16,7 @@ async function _inqueryExpectedAmount( from, amount, to, route ) {
                 , amount
                 , to
                 , route );
-    const val = await QueryChain().call({
+    let val = await QueryChain().call({
       to: GetContract("swapHelper"), 
       data: data,});
     var dec = QueryChain().abi.decodeParameter( 'uint256', val );

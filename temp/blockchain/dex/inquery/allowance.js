@@ -7,12 +7,12 @@
 const { AbiEncode }                   = require ( '../../utils/abi.js' );
 const { QueryChain }                  = require ( '../networks/active.js' );
 
-async function _balanceOf( token, owner ) {
+async function _allowance( contract, owner, spender ) {
 
   try{
-    var data = await AbiEncode( "balanceOf(address)", owner );
+    var data = await AbiEncode( "allowance(address,address)", owner,spender );
     const val = await QueryChain().call({
-      to: token, 
+      to: contract, 
       data: data,
     });
     var dec = QueryChain().abi.decodeParameter( 'uint256', val );
@@ -24,4 +24,4 @@ async function _balanceOf( token, owner ) {
 
 }
 
-module.exports.BalanceOf           = _balanceOf;
+module.exports.Allowance           = _allowance;

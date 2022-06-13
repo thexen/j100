@@ -4,16 +4,15 @@
 
 
 */
-const { AbiEncode }           = require ( '../../utils/abi.js' )
-const { KlaySendTransaction } = require( "../../wallet/sendtx.js");
-const { GetContract }         = require ( '../contracts/contracts.js' );
-const { GetNetwork }          = require ( '../networks/active.js' );
-
+const { AbiEncode }               = require ( '../../utils/abi.js' )
+const { KlaySendTransaction }     = require( "../../wallet/sendtx.js");
+const { GetContract }             = require ( '../contracts/contracts.js' );
+const { GetNetwork }              = require ( '../networks/active.js' );
 
 async function _exchange( wallet, from, amount, to, minimum, route ) {
 
     ///Encoding ABI 
-  var data = await AbiEncode( "exchange(address,uint256,address,uint256,address[])"
+  let data = await AbiEncode( "exchange(address,uint256,address,uint256,address[])"
                       , from
                       , amount
                       , to
@@ -31,7 +30,7 @@ async function _exchange( wallet, from, amount, to, minimum, route ) {
                           gas:    21000000,
                           input:  data,
                         }
-                      })
+                      });
 }
 
 module.exports.SwapHelperExchange           = _exchange;
