@@ -15,8 +15,7 @@ async function _isApprovedForAll( contract, owner, perator ) {
       to: contract, 
       data: data,
     });
-    var dec = QueryChain().abi.decodeParameter( 'bool', val );
-    return dec;
+    return QueryChain().abi.decodeParameters( ['bool'], val );
   } catch( e ) {
     console.log(e)
   } finally {
@@ -32,8 +31,7 @@ async function _getApproved( contract, tokenId ) {
       to: contract, 
       data: data,
     });
-    var dec = QueryChain().abi.decodeParameter( 'address', val );
-    return dec;
+    return QueryChain().abi.decodeParameters( ['address'], val );
   } catch( e ) {
     console.log(e)
   } finally {

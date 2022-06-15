@@ -1,5 +1,5 @@
 /*
-
+  Prefix: SH ( Swap Helper )
 
 
 
@@ -33,5 +33,5 @@ async function _exchange( wallet, from, amount, to, minimum, route ) {
                       });
 }
 
-module.exports.SwapHelperExchange           = _exchange;
+module.exports.SHExchange           = _exchange;
 
