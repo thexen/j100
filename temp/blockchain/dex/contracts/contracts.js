@@ -4,9 +4,9 @@
 
 
 */
-const swapHelper      = "0x659aCd70df7e021302aA2907FE1Dbb7eE50DBc38";
-const swapPoolManager = "0x7F29d1A9B3c0D9aa386dd4d3470ED125cABBf2F4";
-const tokenManager    = "0x9383FEc71ECDfF1511d8f26b9f8Bc0100e0ec49B";
+const swapHelper      = "0xc0D9a54cF6b54361Ac045cD849E8Da784a68E5f8";
+const swapPoolManager = "0xbAa0951c51f93350771c0DD48c5D49ae5BEe8cA2";
+const tokenManager    = "0x42e8F7474996dA449639cb5c4125732c0a992E7a";
 
 function _getContract( object ) {
 

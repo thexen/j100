@@ -54,6 +54,21 @@ async function _inquerySwapPool( index ) {
   }
 }
 
+async function _inqueryPagingSwapPool( index, count ) {
+  try{
+    var data = await AbiEncode( "inqueryPagingSwapPool(uint256,uint8)", index, count );
+    const val = await QueryChain().call({
+      to: GetContract("swapPoolManager"), 
+      data: data,
+    });
+    let list = 'address[' + (count*3) + ']';
+    return QueryChain().abi.decodeParameters( ['address','address',list], val );
+} catch( e ) {
+    console.log(e)
+  } finally {
+  }
+}
+
 async function _inquerySwapPool( index ) {
   try{
     var data = await AbiEncode( "inquerySwapPool(uint256)", index );
@@ -99,6 +114,7 @@ async function _inqueryLPTStakingHolder( swapPool ) {
 module.exports.InquerySPMDailyStat          = _inqueryDailyStat;
 module.exports.InquerySPMPoolSize           = _inqueryPoolSize;
 module.exports.InquerySPMSwapPool           = _inquerySwapPool;
+module.exports.InquerySPMSPagingSwapPool    = _inqueryPagingSwapPool;
 module.exports.InquerySPMLPT                = _inqueryLPT;
 module.exports.InquerySPMLPTStakingHolder   = _inqueryLPTStakingHolder;
 
