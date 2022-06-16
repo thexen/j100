@@ -39,6 +39,7 @@ async function main01() {
                                     , "0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e"
                                     , 5 );
   console.log( middleRoute );
+  
   var expectedValue = await InquerySHExpectedAmount( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
                     , 1000000000 
                     , "0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e"
@@ -125,7 +126,7 @@ async function main03() {
 async function main04() {
 
     //중간 경로 구하기 
-    var middleRoute    = DiscoveryFirstMiddleiRoute( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
+    var middleRoute       = DiscoveryFirstMiddleiRoute( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
                           , "0x658a3a6065E16FE42D8a51CC00b0870e850909F5"
                           , 5 );
     console.log( middleRoute );                          
@@ -137,7 +138,7 @@ async function main04() {
     console.log( JSON.stringify( routes, null, 2 ) );        
         
     //모든 중간 경로 구하기
-    var middleRoutes    = DiscoveryMiddleiRoutes( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
+    var middleRoutes      = DiscoveryMiddleiRoutes( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
                           , "0x658a3a6065E16FE42D8a51CC00b0870e850909F5"
                           , 5 );
     console.log( JSON.stringify( middleRoutes, null, 2 ) );       
@@ -155,15 +156,6 @@ async function main04() {
 
 //Swap Pool Lising
 async function main05() {
-  /*
-  var swapPoolSize = await InquerySPMPoolSize();
-  console.log( swapPoolSize[0] );
-  for( var i=1; i<=swapPoolSize[0]; i++ ) {
-    var swapPool = await InquerySPMSwapPool( i );
-    console.log( swapPool[0] );
-  }
-  */
-
   var obj = await InquerySPMSPagingSwapPool( 1, 4 );
   console.log( obj );
 }

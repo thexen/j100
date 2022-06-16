@@ -10,10 +10,14 @@ const { MongoClient, ReadPreference } = require('mongodb');
 const {MONGODBCONF} = require('../../../config/chain');
 
 /*
-const mongoHost = 'mongodb://192.168.10.111:27017,192.168.10.113:27017,192.168.10.112:27018/test_db';
-//const mongoHost = 'mongodb://192.168.10.112:27017/test_db';
-const mongoUser = 'testuser';
-const mongoPwd  = 'abcd0110';
+admin 계정 정보
+db.auth("admin", "abcd0110");
+*/
+//const mongoHost = 'mongodb://192.168.10.111:27017,192.168.10.113:27017,192.168.10.112:27018/dex_db';
+const mongoHost = 'mongodb://192.168.10.111:27017/dex_db';
+//const mongoHost = 'mongodb://10.10.0.121:27017/test_db';
+const mongoUser = "dexUser";
+const mongoPwd  = "dexUser";
 const mongoConnTimeout  = 5000;
 const mongoConnPool     = 5;
 const mongoReplicaSet   = 'rs0'
@@ -31,8 +35,8 @@ const client = new MongoClient(mongoHost, {
     useUnifiedTopology: true,
     serverSelectionTimeoutMS: mongoConnTimeout
 });
-*/
 
+/*
 const client = new MongoClient( MONGODBCONF.datasource, {
     authSource: MONGODBCONF.auth.source,
     auth: {
@@ -46,6 +50,7 @@ const client = new MongoClient( MONGODBCONF.datasource, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
+*/
 
 async function _connect() {
     if( !client.isConnected() ){
@@ -130,7 +135,6 @@ async function _queryFromFromMongo( _collection, _dslQuery ) {
             }
             return value._source;
 		} else if ( methods[0] == 'find' ){
-
             if( _dslQuery.find['$and'] != undefined ) {
                 for( var i=0; i<_dslQuery.find['$and'].length; i++ ){
                     if( Object.keys( _dslQuery.find['$and'][i] ) == '_timestamp' ){
@@ -141,6 +145,7 @@ async function _queryFromFromMongo( _collection, _dslQuery ) {
                 }
             }
 
+            console.log(_dslQuery.find);
             cursor = collection.find( _dslQuery.find );
             if( await cursor.count() == 0 ){
                 return undefined
