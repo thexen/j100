@@ -8,28 +8,19 @@ var _naviSeed = function( ) {
     swapPools = [ 
         {
             pair: [ '0x21CB1A627380BAdAeF180e1346479d242aca90D3', '0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e' ],
-            pool: {
-                dex: 'newsSwap',
-                contract:   '0xd49797b8E0A402BE748Fd07991A623912629587C',
-                fee:        0.03,
-            },
         },
         {
             pair: [ '0x658a3a6065E16FE42D8a51CC00b0870e850909F5', '0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e' ],
-            pool: {
-                dex: 'newsSwap',
-                contract:   '0x54A0E6d498F16dBc63e6a1E5DB4b4F9F8D605C30',
-                fee:        0.03,
-            },
         },
         {
-            pair: [ '0xAeEa7333B0658158121FAbDB579d49DD10b57950', '0x0000000000000000000000000000000000000000' ],
-            pool: {
-                dex: 'newsSwap',
-                contract:   '0xbDCDD585A2d147f3DAb0eeBBa22d5A09a07c2b4d',
-                fee:        0.03,
-            },
-        }     
+            pair: [ '0x658a3a6065E16FE42D8a51CC00b0870e850909F5', '0x0000000000000000000000000000000000000000' ],
+        },
+        {
+            pair: [ '0x21CB1A627380BAdAeF180e1346479d242aca90D3', '0x658a3a6065E16FE42D8a51CC00b0870e850909F5' ],
+        },
+        {
+            pair: [ '0xfe8c5F82DD2D74e344f94a19Be0bf1BBb59DDFdb', '0x21CB1A627380BAdAeF180e1346479d242aca90D3' ],
+        }
     ];
 }
 
@@ -161,7 +152,6 @@ var _discoverySwapRoute = function( from, to, waypointCount ) {
                     if( ( swapPools[j].pair[0] == swapRoutes.swap_route[i][k][0] || swapPools[j].pair[1] == swapRoutes.swap_route[i][k][0] ) 
                         && ( swapPools[j].pair[0] == swapRoutes.swap_route[i][k][1] || swapPools[j].pair[1] == swapRoutes.swap_route[i][k][1] ) ){
                         var info = {}
-                        info[ 'pool' ]      = swapPools[j].pool;
                         info[ 'from' ]      = { token: swapRoutes.swap_route[i][k][0], balance: 0 };
                         info[ 'to' ]        = { token: swapRoutes.swap_route[i][k][1], balance: 0 };
                         info[ 'rating' ]    = 0;
@@ -174,7 +164,6 @@ var _discoverySwapRoute = function( from, to, waypointCount ) {
                     }    
                 }
                 if( !bFound ) {
-                    //단절
                     break;
                 }                
                 if( swapRoutes.swap_route[i][k].length > 3 ) {
@@ -184,7 +173,7 @@ var _discoverySwapRoute = function( from, to, waypointCount ) {
             if( !bFound ) {
                 swapRoutes.swap_route.splice( i, 1 );
                 i--;
-            }
+            } 
         }
 
         //단절 경로 삭제
@@ -203,10 +192,15 @@ var _discoveryFirstMiddleRoute = function( from, to, waypointCount ) {
     try{
         var exploredRoute = [];
         var exploredswapRoutes = _discoverySwapRoute( from, to, waypointCount );
-        if( exploredswapRoutes.swap_route[0].length > 1 ) {
-            for( var i=0; i<exploredswapRoutes.swap_route[0].length-1; i++ ){
-                exploredRoute.push( exploredswapRoutes.swap_route[0][i][2].to.token );
+        if( exploredswapRoutes.swap_route.length > 0 ) {
+            if( exploredswapRoutes.swap_route[0].length > 1 ) {
+                for( var i=0; i<exploredswapRoutes.swap_route[0].length-1; i++ ){
+                    exploredRoute.push( exploredswapRoutes.swap_route[0][i][2].to.token );
+                }
             }
+        } else {
+            //발견된 경로가 없다
+            exploredRoute = undefined;
         }
         return exploredRoute;
     } catch( e ){
@@ -221,15 +215,20 @@ var _discoveryMiddleRoutes = function( from, to, waypointCount ) {
     try{
         var exploredRoutes = [];
         var exploredswapRoutes = _discoverySwapRoute( from, to, waypointCount );
-        for( var i=0; i<exploredswapRoutes.swap_route.length; i ++ ){
-            var exploredRoute = [];
-            if( exploredswapRoutes.swap_route[i].length > 1 ) {
-                for( var k=0; k<exploredswapRoutes.swap_route[i].length-1; k++ ){
-                    exploredRoute.push( exploredswapRoutes.swap_route[i][k][2].to.token );
+        if( exploredswapRoutes.swap_route.length > 0 ) {
+            for( var i=0; i<exploredswapRoutes.swap_route.length; i ++ ){
+                var exploredRoute = [];
+                if( exploredswapRoutes.swap_route[i].length > 1 ) {
+                    for( var k=0; k<exploredswapRoutes.swap_route[i].length-1; k++ ){
+                        exploredRoute.push( exploredswapRoutes.swap_route[i][k][2].to.token );
+                    }
                 }
+                exploredRoutes.push( exploredRoute );
+                exploredRoute = undefined;
             }
-            exploredRoutes.push( exploredRoute );
-            exploredRoute = undefined;
+        } else {
+            //발견된 경로가 없다
+            exploredRoutes = undefined;
         }
         return exploredRoutes;
     } catch( e ){

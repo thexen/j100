@@ -122,12 +122,10 @@ async function _queryFromFromMongo( _collection, _dslQuery ) {
         if( _dslQuery == undefined ){
             throw Error( 'Requered DSLQuery.' );
         }
-    
         let methods = Object.keys( _dslQuery );
         if( methods.length != 1 ){
             throw Error( 'Method must one in DSLQuery.' );
         }
-
 		if( methods[0] == 'findone' ){
             value      = await collection.findOne( _dslQuery.findone );
             if( value == undefined ){
@@ -144,8 +142,6 @@ async function _queryFromFromMongo( _collection, _dslQuery ) {
                     }
                 }
             }
-
-            console.log(_dslQuery.find);
             cursor = collection.find( _dslQuery.find );
             if( await cursor.count() == 0 ){
                 return undefined
@@ -158,12 +154,16 @@ async function _queryFromFromMongo( _collection, _dslQuery ) {
                     _source: value._source 
                 });
             }
-
             return sliceTemp;
+        } else if( methods[0] == 'count' ){
+            value = await collection.countDocuments( _dslQuery.count )
+            if( value == undefined ){
+                return undefined;
+            }
+            return value;
 		} else {
 		    throw Error( 'DSLQuery Method is not define' );		
         }
-        
     } finally {
         sliceTemp   = undefined;
         value       = undefined;

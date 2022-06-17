@@ -18,11 +18,17 @@ const {
         InquerySPMSwapPool, 
         InquerySPMSPagingSwapPool,
       }                                                         =  require ( './inquery/swapPoolManager.js' );       
-const { InqueryTMTokenGrade, InqueryTMToken }                   =  require ( './inquery/tokenManager.js' );
+const { 
+        InqueryTMTokenGrade, 
+        InqueryTMToken,
+        InqueryTMTokenCount 
+      }                                                         =  require ( './inquery/tokenManager.js' );
 const { InquerySPAssets, InquerySPPoolnfo, InquerySPToken }     =  require ( './inquery/swapPool.js' );
 const { InqueryLSHStakingRewardConst }                          =  require ( './inquery/lptStaking.js' );
 const { CalcMiningAmount }                                      =  require ( './utils/mining/calcMiningAmount.js' );
-const { BalanceOf, Allowance }                                  =  require ( './inquery/erc20.js' );
+const { BalanceOf, Symbol, Allowance }                          =  require ( './inquery/erc20.js' );
+const { UpsertToMongo, QueryFromMongo }                         =  require ( '../../common/chains/mongo/call.js' );
+
 
 async function main00() {
   var balance = await BalanceOf( "0x658a3a6065E16FE42D8a51CC00b0870e850909F5", "0xFf8EF2b0054Edf1A722186CE62BBE4323951e99B" );
@@ -179,11 +185,166 @@ async function main06() {
   var poolSize     = await InquerySPMPoolSize();
   console.log( poolSize['0'] );
 
-  var obj = await InquerySPMSPagingSwapPool( poolSize['0'], 1 );
-  console.log( obj[2][0]);
-
+  var obj         = await InquerySPMSPagingSwapPool( poolSize['0'], 1 );
   var poolInfo    = await InquerySPPoolnfo( obj[2][0] );
-  console.log( poolInfo );
+  var query1      = {
+    findone: { 
+      "_source.contract": poolInfo[0]
+    }
+  }
+  var query2  = {
+    findone: { 
+      "_source.contract": poolInfo[3]
+    }
+  }    
+  var res1      = await QueryFromMongo( "tokens", query1 );
+  var res2      = await QueryFromMongo( "tokens", query2 );
+  let swapPool  = {
+    tokens: {
+        first: {
+          contract: res1.contract,
+          symbol:   res1.symbol,
+          icon:     res1.icon,
+        },
+        second: {
+          contract: res2.conract,
+          symbol:   res2.symbol,
+          icon:     res2.icon,
+        }
+    },
+    contracts: { 
+        sp:     obj[2][0 + (i*3)],    //swappool
+        holder: obj[2][1 + (i*3)],    //holder
+        lpt:    obj[2][2 + (i*3)],    //lpt
+    }
+  }
+
+
+}
+//main06();
+
+//sync swap pool to mongoDB
+async function main07() {
+  
+  var poolSize    = await InquerySPMPoolSize();
+  var obj         = await InquerySPMSPagingSwapPool( 1, poolSize[0] );    //Number(poolSize[0])
+  for( var i=0; i<Number(poolSize[0]); i++ ){
+
+    var poolInfo    = await InquerySPPoolnfo( obj[2][0 + (i*3)] );
+
+    var query1  = {
+      findone: { 
+        "_source.contract": poolInfo[0]
+      }
+    }
+    var query2  = {
+      findone: { 
+        "_source.contract": poolInfo[3]
+      }
+    }    
+    var res1      = await QueryFromMongo( "tokens", query1 );
+    var res2      = await QueryFromMongo( "tokens", query2 );
+    let swapPool  = {
+      tokens: {
+          first: {
+            contract: res1.contract,
+            symbol:   res1.symbol,
+            icon:     res1.icon,
+          },
+          second: {
+            contract: res2.contract,
+            symbol:   res2.symbol,
+            icon:     res2.icon,
+          }
+      },
+      contracts: { 
+          sp:     obj[2][0 + (i*3)],    //swappool
+          holder: obj[2][1 + (i*3)],    //holder
+          lpt:    obj[2][2 + (i*3)],    //lpt
+      }
+    }
+    UpsertToMongo( 'swappools', i+1, swapPool );
+  }
+ 
+}
+//main07()
+
+//regist token
+async function main08() {
+
+    var index = 5;
+    var token = await InqueryTMToken( index );
+    console.log( token[0] );
+    var symbol = await Symbol( token[0] );
+    console.log( symbol[0] );
+    var grade = await InqueryTMTokenGrade( token[0] );
+    console.log( grade[0] );
+
+    let tokenInfo = {
+      contract: token[0],
+      symbol:  symbol[0],
+      icon: 'http://',
+      grade: grade[0],
+    }
+
+    UpsertToMongo( 'tokens', index, tokenInfo );
+
+}
+//main08();
+
+function  getRandomInt(min, max) { //min ~ max 사이의 임의의 정수 반환    
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
-main06();
+
+async function main09() {
+  var rand1 = getRandomInt( 1, 4 );
+  var rand2 = undefined;
+  for(;;){
+    rand2 = getRandomInt( 1, 4 );
+    if( rand1 != rand2 )
+    break
+  }
+  console.log( rand1 + " : " + rand2 );
+
+  var query1  = {
+    findone: { 
+      "_id": rand1
+    }
+  }
+  var query2  = {
+    findone: { 
+      "_id": rand2
+    }
+  } 
+
+  var res1      = await QueryFromMongo( "tokens", query1 );
+  var res2      = await QueryFromMongo( "tokens", query2 );
+
+  console.log( res1.contract );     
+  console.log( res2.contract );     
+
+ //중간 경로 구하기 
+  var middleRoute       = DiscoveryFirstMiddleiRoute( res1.contract
+    , res2.contract
+    , 5 );
+  console.log( middleRoute );                          
+/*
+  var middleRoute  = DiscoveryFirstMiddleiRoute( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
+                                    , "0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e"
+                                    , 5 );
+  console.log( middleRoute );  
+*/  
+
+/*
+  var res = await QueryFromMongo( "swappools", {find:{}} );
+  console.log(res.length);
+
+  for( var i=0; i<res.length; i++ ) {
+    console.log( res[i]._source.contracts.sp );
+  }
+*/  
+
+}
+
+main09();

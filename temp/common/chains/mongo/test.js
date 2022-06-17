@@ -7,21 +7,38 @@ const {UpsertToMongo, QueryFromMongo} = require('./call.js');
     4. 2에서 구한 갯수와 3의 갯수 차이를 계산하면 방금 생성한 swap pool의 index를 구할 수 있다
 */
 
-async function insertSwapPool( _id, ) {
+async function insertSwapPool( _id ) {
     let swapPool = {
-        token: {
-            first: '',
-            second: '',
+        tokens: {
+            first: {
+                contract: '',
+                symbol: '',
+                icon: '',
+            },
+            second: {
+                conract: '',
+                symbol: '',
+                icon: '',
+            }
         },
-        address: { 
+        contracts: { 
             sp: '',
             holder: '',
             lpt: '',
         }
     }
-    await UpsertToMongo( "tests", "id1", swapPool );
+
+    let token = {
+        contract: '',
+        symbol: '',
+        icon: '',
+        grade: '',
+    }
+
+    //await UpsertToMongo( "tests", "id1", swapPool );
+    //var res = await QueryFromMongo( "tests", {count:{}} );
     var res = await QueryFromMongo( "tests", {find:{}} );
     console.log(res);
 }
 
-main();
+insertSwapPool();
