@@ -5,9 +5,10 @@
 
 */
 
+const { AbiEncode }                                             = require ( '../utils/abi.js' );
 const { OpenWalletFromPrivateKey, OpenWalletFromKeystoreV3, OpenWalletFromMnemonic, OpenHDWallet } = require( '../wallet/import.js' );
 const { DiscoveryFirstMiddleiRoute, DiscoveryRoutes, DiscoveryMiddleiRoutes } = require ( '../routing/swapHelpRouter.js' );
-const { QueryChain, QueryWS }                                   =  require ( './networks/active.js' );
+const { QueryChain, QueryWS, GetWeb3 }                          =  require ( './networks/active.js' );
 const { GetContract }                                           =  require ( './contracts/contracts.js' );
 const { SHExchange }                                            =  require ( './klaytn/swapHelper.js' );
 const { CreateSwapPool }                                        =  require ( './klaytn/spFactory.js' );
@@ -28,6 +29,7 @@ const { InqueryLSHStakingRewardConst }                          =  require ( './
 const { CalcMiningAmount }                                      =  require ( './utils/mining/calcMiningAmount.js' );
 const { BalanceOf, Symbol, Allowance }                          =  require ( './inquery/erc20.js' );
 const { UpsertToMongo, QueryFromMongo }                         =  require ( '../../common/chains/mongo/call.js' );
+const { default: Web3 } = require('web3');
 
 
 async function main00() {
@@ -356,6 +358,7 @@ async function main09() {
 //main09();
 
 //baobob
+
 async function main10() {
   
   //-------------------------------------------------------------
@@ -364,6 +367,12 @@ async function main10() {
       //toBlock: '93944332',
       address: '0xf8b1C0a378166E46a186c3eb3E35231C731B19B8', //<Contract Address
   };
+
+  //-------------------------------------------------
+  //topics[0]
+  var data = GetWeb3().utils.keccak256( "Exchange(address,address,address,uint256,uint256,uint256)" );
+  console.log( data )
+  //-------------------------------------------------
 
   var opts = [
       {
@@ -394,6 +403,7 @@ async function main10() {
       }
   ]
 
+  /*
   var subscription = QueryWS().subscribe('logs', options, function(error, result){
       if (!error){
           //console.log(result);
@@ -402,6 +412,9 @@ async function main10() {
           console.log(obj);
       }
   });
+  */
+
+
 
 }
 
