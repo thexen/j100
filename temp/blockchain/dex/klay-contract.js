@@ -7,7 +7,7 @@
 
 const { OpenWalletFromPrivateKey, OpenWalletFromKeystoreV3, OpenWalletFromMnemonic, OpenHDWallet } = require( '../wallet/import.js' );
 const { DiscoveryFirstMiddleiRoute, DiscoveryRoutes, DiscoveryMiddleiRoutes } = require ( '../routing/swapHelpRouter.js' );
-const { GetNetwork }                                            =  require ( './networks/active.js' );
+const { QueryChain, QueryWS }                                   =  require ( './networks/active.js' );
 const { GetContract }                                           =  require ( './contracts/contracts.js' );
 const { SHExchange }                                            =  require ( './klaytn/swapHelper.js' );
 const { CreateSwapPool }                                        =  require ( './klaytn/spFactory.js' );
@@ -298,12 +298,13 @@ function  getRandomInt(min, max) { //min ~ max 사이의 임의의 정�
 
 
 async function main09() {
+
   var rand1 = getRandomInt( 1, 4 );
   var rand2 = undefined;
   for(;;){
     rand2 = getRandomInt( 1, 4 );
     if( rand1 != rand2 )
-    break
+      break
   }
   console.log( rand1 + " : " + rand2 );
 
@@ -329,22 +330,79 @@ async function main09() {
     , res2.contract
     , 5 );
   console.log( middleRoute );                          
-/*
-  var middleRoute  = DiscoveryFirstMiddleiRoute( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
-                                    , "0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e"
-                                    , 5 );
-  console.log( middleRoute );  
-*/  
+
+  var query3  = {
+    find: {}
+  } 
+
+  var res3      = await QueryFromMongo( "swappools", query3 );
+
+  console.log( JSON.stringify(res3,null,2) );     
+  console.log( res3[0]._source.tokens.first.contract );     
+
 
 /*
-  var res = await QueryFromMongo( "swappools", {find:{}} );
-  console.log(res.length);
+  //교환시 받을 수 있는 token 수량 구하기
+  var expectedValue   = await InquerySHExpectedAmount( res1.contract
+                        , 1000000000 
+                        ,res2.contract
+                        , middleRoute );
+  console.log( ">>>>>>>>>:" +  expectedValue[0] );                                        
+  console.log( expectedValue );   
+  */
 
-  for( var i=0; i<res.length; i++ ) {
-    console.log( res[i]._source.contracts.sp );
-  }
-*/  
+ 
+}
+//main09();
+
+//baobob
+async function main10() {
+  
+  //-------------------------------------------------------------
+  var options = {
+      fromBlock: '93944331',
+      //toBlock: '93944332',
+      address: '0xf8b1C0a378166E46a186c3eb3E35231C731B19B8', //<Contract Address
+  };
+
+  var opts = [
+      {
+          type: 'string',
+          name: 'abi',
+          indexed: true
+      },{
+          type: 'address',
+          name: 'caller',
+          indexed: true
+      },{
+          type: 'address',
+          name: 'from',
+          indexed: true
+      },{
+          type: 'address',
+          name: 'to',
+          indexed: true
+      },{
+          type: 'uint256',
+          name: 'amount',
+      },{
+          type: 'uint256',
+          name: 'slppage',
+      },{
+          type: 'uint256',
+          name: 'receipt',
+      }
+  ]
+
+  var subscription = QueryWS().subscribe('logs', options, function(error, result){
+      if (!error){
+          //console.log(result);
+          //console.log(result.topics);
+          var obj =  QueryChain().abi.decodeLog( opts, result.data, result.topics );
+          console.log(obj);
+      }
+  });
 
 }
 
-main09();
+main10()

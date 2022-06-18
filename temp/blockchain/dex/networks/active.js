@@ -7,17 +7,29 @@
 const Web3                            = require('web3');
 const Caver                           = require("caver-js");
 
-const { GetBaoBabNetwork }            = require ( './klayBaobab.js' );
+const { 
+        GetBaoBabNetwork, 
+        GetBaoBabWebSocket 
+      }                               = require ( './klayBaobab.js' );
 
 const web3                            = new Web3( new Web3.providers.HttpProvider( _getNetwork() ) );
+const web3ws                          = new Web3( _getWebSocket() );
 const caver                           = new Caver( _getNetwork() );
 
 function _getNetwork() {
   return GetBaoBabNetwork();
 }
 
+function _getWebSocket() {
+  return GetBaoBabWebSocket();
+}
+
 function _getWeb3() {
   return web3;
+}
+
+function _getWeb3WS() {
+  return web3ws;
 }
 
 function _getCaver() {
@@ -28,7 +40,13 @@ function _queryChain() {
   return web3.eth;
 }
 
+function _queryWS() {
+  return web3ws.eth;
+}
+
 module.exports.GetWeb3                      = _getWeb3;
+module.exports.GetWeb3WS                    = _getWeb3WS;
 module.exports.GetCaver                     = _getCaver;
 module.exports.QueryChain                   = _queryChain;
+module.exports.QueryWS                      = _queryWS;
 module.exports.GetNetwork                   = _getNetwork;

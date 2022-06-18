@@ -4,8 +4,9 @@
 
 
 */
-const Web3 = require('web3')
-
+const Web3                            = require('web3')
+const Caver                           = require("caver-js");
+const { QueryChain }                  = require ( '../dex/networks/active.js' );
 
 async function main() {
 
@@ -53,5 +54,61 @@ async function main() {
     console.log( dec )
 
 }
+//main();
 
-main();
+//baobob
+async function main2() {
+
+    const web3ws = new Web3('wss://api.baobab.klaytn.net:8652')
+
+    //-------------------------------------------------------------
+    var options = {
+        fromBlock: '93944331',
+        //toBlock: '93944332',
+        address: '0xf8b1C0a378166E46a186c3eb3E35231C731B19B8', //<Contract Address
+    };
+  
+    var opts = [
+        {
+            type: 'string',
+            name: 'abi',
+            indexed: true
+        },{
+            type: 'address',
+            name: 'caller',
+            indexed: true
+        },{
+            type: 'address',
+            name: 'from',
+            indexed: true
+        },{
+            type: 'address',
+            name: 'to',
+            indexed: true
+        },{
+            type: 'uint256',
+            name: 'amount',
+        },{
+            type: 'uint256',
+            name: 'slppage',
+        },{
+            type: 'uint256',
+            name: 'receipt',
+        }
+    ]
+
+    var subscription = web3ws.eth.subscribe('logs', options, function(error, result){
+        if (!error){
+            //console.log(result);
+            //console.log(result.topics);
+            var obj =  QueryChain().abi.decodeLog( opts, result.data, result.topics );
+            console.log(obj);
+        }
+
+    });
+   
+
+
+}
+
+main2()
