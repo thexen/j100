@@ -363,14 +363,14 @@ async function main10() {
   
   //-------------------------------------------------------------
   var options = {
-      fromBlock: '93944331',
-      //toBlock: '93944332',
-      address: '0xf8b1C0a378166E46a186c3eb3E35231C731B19B8', //<Contract Address
+      fromBlock: '94043280',
+      toBlock: '94043281',
+      address: '0x6208e0c4F54D5a86F7B2d37E2e861025191284a6'//
   };
-
+//0x6208e0c4F54D5a86F7B2d37E2e861025191284a6
   //-------------------------------------------------
   //topics[0]
-  var data = GetWeb3().utils.keccak256( "Exchange(address,address,address,uint256,uint256,uint256)" );
+  var data = GetWeb3().utils.keccak256( "CreateSwapPool(address,address,address,address,address,uint256)" );
   console.log( data )
   //-------------------------------------------------
 
@@ -381,29 +381,26 @@ async function main10() {
           indexed: true
       },{
           type: 'address',
-          name: 'caller',
-          indexed: true
+          name: 'firstToken',
       },{
           type: 'address',
-          name: 'from',
-          indexed: true
+          name: 'secondToken',
       },{
           type: 'address',
-          name: 'to',
-          indexed: true
+          name: 'sp',
+      },{
+          type: 'address',
+          name: 'holder',
+      },{
+          type: 'address',
+          name: 'lpt',
       },{
           type: 'uint256',
-          name: 'amount',
-      },{
-          type: 'uint256',
-          name: 'slppage',
-      },{
-          type: 'uint256',
-          name: 'receipt',
+          name: 'fee',
       }
   ]
 
-  /*
+  
   var subscription = QueryWS().subscribe('logs', options, function(error, result){
       if (!error){
           //console.log(result);
@@ -412,7 +409,7 @@ async function main10() {
           console.log(obj);
       }
   });
-  */
+  
 
 
 
