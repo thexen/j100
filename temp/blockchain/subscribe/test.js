@@ -64,7 +64,7 @@ async function main2() {
     //-------------------------------------------------------------
     var options = {
         fromBlock: '93944331',
-        //toBlock: '93944332',
+        toBlock: '93944519',
         address: '0xf8b1C0a378166E46a186c3eb3E35231C731B19B8', //<Contract Address
     };
   
@@ -97,18 +97,30 @@ async function main2() {
         }
     ]
 
+    
     var subscription = web3ws.eth.subscribe('logs', options, function(error, result){
         if (!error){
             //console.log(result);
             //console.log(result.topics);
             var obj =  QueryChain().abi.decodeLog( opts, result.data, result.topics );
+            //console.log(result);
             console.log(obj);
+        } else {
+            console.log( "aa")
+            subscription.unsubscribe( (error, success) => {
+                if(error) {
+                  console.log('Failed to disconnect from Thundercore mainnet!');
+                }
+                if(success) {
+                  console.log('disconnected');
+                }
+              });
+
         }
-
     });
-   
+    
 
-
+    
 }
 
 main2()
