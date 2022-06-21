@@ -439,7 +439,6 @@ async function main10() {
 
     var subscription = QueryWS().subscribe('logs', filters, function(error, result) {
         if (error) {
-          console.log( "aa")
           subscription.unsubscribe( (error, success) => {
               if(error) {
                 console.log('Failed to disconnect from Thundercore mainnet!');
@@ -450,6 +449,7 @@ async function main10() {
             });
         }
       }).on("data", function(log) {
+        console.log(log);
         var topicMethod       =  QueryChain().abi.decodeLog( optsTopics, undefined, log.topics );
         var decodedLog        =  QueryChain().abi.decodeLog( objInputs[topicMethod.method], log.data, log.topics );
         console.log(decodedLog);    
