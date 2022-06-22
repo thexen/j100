@@ -421,8 +421,8 @@ async function main10() {
   var filters = {
       fromBlock: '94043280',
       //toBlock: '94043285',
-      address: ['0x6208e0c4F54D5a86F7B2d37E2e861025191284a6'],//
-      //topics: [ data ]
+      address: ['0x6208e0c4F54D5a86F7B2d37E2e861025191284a6'],// OR 연산 처리 됨
+      //topics: [ data ] //< AND 연산 처리 됨
   };
 
   var optsTopics = [      
