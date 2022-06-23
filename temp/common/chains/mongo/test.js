@@ -35,7 +35,7 @@ async function insertSwapPool( _id ) {
         grade: '',
     }
 
-    //await UpsertToMongo( "tests", "id1", swapPool );
+    await UpsertToMongo( "tests", 2, {key: "value2"} );
     //var res = await QueryFromMongo( "tests", {count:{}} );
     var res = await QueryFromMongo( "tests", {find:{}} );
     console.log(res);
