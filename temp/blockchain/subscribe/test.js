@@ -97,7 +97,8 @@ async function main2() {
         }
     ]
 
-    
+    var bl = await QueryChain().getBlock( options.fromBlock );
+    console.log( bl.timestamp );
     var subscription = web3ws.eth.subscribe('logs', options, function(error, result){
         if (!error){
             //console.log(result);

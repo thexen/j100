@@ -249,21 +249,38 @@ async function main07() {
     let swapPool  = {
       tokens: {
           first: {
-            contract: res1.contract,
-            symbol:   res1.symbol,
-            icon:     res1.icon,
+            contract:       res1.contract,
+            symbol:         res1.symbol,
+            icon:           res1.icon,
           },
           second: {
-            contract: res2.contract,
-            symbol:   res2.symbol,
-            icon:     res2.icon,
+            contract:       res2.contract,
+            symbol:         res2.symbol,
+            icon:           res2.icon,
           }
       },
       contracts: { 
           sp:     obj[2][0 + (i*3)],    //swappool
           holder: obj[2][1 + (i*3)],    //holder
           lpt:    obj[2][2 + (i*3)],    //lpt
-      }
+      },
+      assets: {
+        first: 0,
+        second: 0,
+        totalSupply: 0, //LPT 발행수    
+      },
+      stat: {
+        thirtyDays: { //30일간 누적 통계
+          tradingVolume: {
+            first: 0,
+            second: 0,
+          },
+          income: {
+            first: 0,
+            second: 0,
+          }
+        }
+      },
     }
     UpsertToMongo( 'swappools', i+1, swapPool );
   }
