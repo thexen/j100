@@ -84,11 +84,11 @@ async function _deposit( wallet, swapPool, firstAmount, secondAmount, bTNC ) {
 
 }
 
-async function _withdrawal( wallet, swapPool, tokenId ) {
+async function _withdrawal( wallet, swapPool, tokenIds ) {
 
   //Encoding ABI 
   try{    
-    let data = await AbiEncode( "withdrawal(uint256)", tokenId );
+    let data = await AbiEncode( "withdrawal(uint256[])", tokenIds );
 
     return await KlaySendTransaction( {
                           provider: {
