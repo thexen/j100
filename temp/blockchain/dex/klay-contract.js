@@ -10,7 +10,7 @@ const { OpenWalletFromPrivateKey, OpenWalletFromKeystoreV3, OpenWalletFromMnemon
 const { DiscoveryFirstMiddleiRoute, DiscoveryRoutes, DiscoveryMiddleiRoutes } = require ( '../routing/swapHelpRouter.js' );
 const { QueryChain, QueryWS, GetWeb3 }                          =  require ( './networks/active.js' );
 const { GetContract }                                           =  require ( './contracts/contracts.js' );
-const { SHExchange }                                            =  require ( './klaytn/swapHelper.js' );
+const { SHExchange, Test }                                      =  require ( './klaytn/swapHelper.js' );
 const { CreateSwapPool }                                        =  require ( './klaytn/spFactory.js' );
 const { InquerySHExpectedAmount }                               =  require ( './inquery/swapHelper.js' );
 const { 
@@ -60,11 +60,12 @@ async function main01() {
   
   var amount = 1000000000;
   if( allowance['0']  >= amount ) {
-    await SHExchange( wallet, "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
+    var tx = await SHExchange( wallet, "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
           , amount
           , "0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e"
           , expectedValue['0']
           , middleRoute );
+    console.log( tx );
   } else {
     console.log( "required allowance" );
     console.log( allowance['0'] );
@@ -426,10 +427,30 @@ async function main10() {
           console.log(obj);
       }
   });
-  
+}
+//main10()
 
+const { abiEventMapper }                                    =  require ( './events/mappingBuilder' );
+const { txLogger }                                          =  require ( './events/logger' );
+async function main11() {
+
+  /*
+  var  data = QueryChain().abi.encodeEventSignature( "OwnerSet(address,address,uint256)" );
+  console.log( data );
+  var data = QueryChain().abi.decodeParameters(['uint256'], '0x0000000000000000000000000000000000000000000000000000000000000002');
+  console.log( data[0] );
+  //'0x7da4606c33938e8c15b5228e4f7be78c8080d22411bf1df3a638bdc17715c66e',
+  */
+   
+
+  const wallet          = await OpenWalletFromPrivateKey("0x69908c50c12b5e7aa84fe245a107431ea666ceb650b31a55c28e9bf2987d74c3");
+
+  var tx = await Test( wallet, wallet.getAddressString() );
+  console.log( tx );
+  console.log( tx.logs[0].topics );
+
+  txLogger( tx, abiEventMapper );
 
 
 }
-
-main10()
+main11();

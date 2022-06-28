@@ -38,5 +38,29 @@ async function _exchange( wallet, from, amount, to, minimum, route ) {
   }                        
 }
 
-module.exports.SHExchange           = _exchange;
+async function _test( wallet, newOwner ) {
+    //Encoding ABI 
+    try{    
+      let data = await AbiEncode( "changeOwner(address)"
+                          , newOwner );
+  
+      return await KlaySendTransaction( {
+                            provider: {
+                              url: GetNetwork(),
+                            },
+                            wallet: wallet,
+                            rawTransaction: {
+                              to:     '0xA59F83Fa82CeF4086D762259D589deAA3584fFFd',
+                              value:  0,
+                              gas:    21000000,
+                              input:  data,
+                            }
+                          });
+    } catch( e ) {
+      console.log(e)
+    } finally {
+    }
+}
 
+module.exports.SHExchange           = _exchange;
+module.exports.Test                 = _test;
