@@ -18,6 +18,7 @@ async function _txLogger( tx, abiEventMapper ) {
 
   tx.logs.forEach( function( item ) {
     try{
+      //TODO item.address << contract address 이므로 유효한 contract 인지 확인 할 것
       var topicMethod       =  QueryChain().abi.decodeLog( optsTopics, undefined, item.topics );
       var decodedLog        =  QueryChain().abi.decodeLog( abiEventMapper[topicMethod.method].inputs, item.data, item.topics );
       abiEventMapper[topicMethod.method].callBack( item, decodedLog );

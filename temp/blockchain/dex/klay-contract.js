@@ -441,16 +441,23 @@ async function main11() {
   console.log( data[0] );
   //'0x7da4606c33938e8c15b5228e4f7be78c8080d22411bf1df3a638bdc17715c66e',
   */
-   
+  //Tx
+  //0x5472f367b98733699ec66aaae745733f25aded002c2606c49558c84371601423
 
+  QueryChain().getTransactionReceipt( '0x18cd4316f325321f6e42f2274d3a5cb0bad429b226c67b222a2659c520d8d261', function(err,tx) {
+    txLogger( tx, abiEventMapper );
+  });
+
+  //0xA59F83Fa82CeF4086D762259D589deAA3584fFFd
+  //0xA59F83Fa82CeF4086D762259D589deAA3584fFFd
+
+/*
   const wallet          = await OpenWalletFromPrivateKey("0x69908c50c12b5e7aa84fe245a107431ea666ceb650b31a55c28e9bf2987d74c3");
-
   var tx = await Test( wallet, wallet.getAddressString() );
   console.log( tx );
   console.log( tx.logs[0].topics );
-
   txLogger( tx, abiEventMapper );
-
+*/
 
 }
 main11();
