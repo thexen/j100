@@ -102,6 +102,16 @@ async function _updateToMogo( _collection, _query, _doc ) {
     }
 }
 
+async function _findToModify( _collection, _query, _update, _new ) {
+    await _connect();
+    const databse = client.db();
+    const collection = databse.collection(_collection);
+    try{
+        return await collection.findAndModify( _query, _update, _new  );
+    } finally {
+    }
+}
+
 async function _deleteFromMongo( _collection, _id ) {
     await _connect();
     const databse = client.db();
@@ -177,3 +187,5 @@ module.exports.GetFromMongo = _getFromMongo;
 module.exports.DeleteFromMongo = _deleteFromMongo;
 module.exports.QueryFromMongo = _queryFromFromMongo;
 module.exports.UpdateFromMongo = _updateToMogo;
+
+module.exports.FindToModify = _findToModify

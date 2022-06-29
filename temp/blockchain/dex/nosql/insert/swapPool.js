@@ -4,7 +4,7 @@
 
 
 */
-const { UpsertToMongo, QueryFromMongo }                         =  require ( '../../../../common/chains/mongo/call.js' );
+const { UpsertToMongo, QueryFromMongo, FindToModify }                         =  require ( '../../../../common/chains/mongo/call.js' );
 
 /*
 
@@ -53,7 +53,7 @@ const { UpsertToMongo, QueryFromMongo }                         =  require ( '..
 
 async function _insertSwapPool( firstToken, secondToken, sp, holder, lpt, block ) {
  
-    let swapPool  = {
+    let swapPoolInfo  = {
         tokens: {
             first:          firstToken,
             second:         secondToken,
@@ -82,8 +82,36 @@ async function _insertSwapPool( firstToken, secondToken, sp, holder, lpt, block 
         },
     }
 
-    UpsertToMongo( 'swappools', sp, swapPool );
+    UpsertToMongo( 'swappools', sp, swapPoolInfo );
    
+  }
+
+  async function _insertPair( firstToken, secondToken ) {
+
+    var pair = {
+        first:          firstToken,
+        second:         secondToken,
+    };
+
+    var query2  = {
+        query: { 
+            _id: 'pair',
+        }, 
+        update: {
+            $inc: { seq: 1 }
+        },
+        upsert: true
+    }    
+    var res1      = await FindToModify( "counters", { 
+        _id: 'pairs',
+    }, 
+    { rating: 1 },
+    {
+        '$inc': { seq: 1 }
+    } );
+
+    console.log( res1 );
+
   }
 
   async function test() {
@@ -131,6 +159,8 @@ async function _insertSwapPool( firstToken, secondToken, sp, holder, lpt, block 
 
   }
 
-  test();
+  //test();
+
+  _insertPair();
 
   module.exports.insertSwapPool     = _insertSwapPool;

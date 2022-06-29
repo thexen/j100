@@ -11,7 +11,7 @@ const {_getFsFilePath}  = require('./utils/fs')
 
 const {CONFIG}          = require('../../config/config')
 
-var _get = async function( _req, _res){
+var _get = async function( _req, _res ){
 
     let stream = undefined;
     try {

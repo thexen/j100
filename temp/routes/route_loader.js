@@ -27,7 +27,7 @@ function initRoutes(app, router) {
 		} else {
 			router.route(curItem.path).post(curModule[curItem.method]);
 		}
-		console.log('set route file: %s, method: %s ', curItem.file, curItem.method);
+		console.log('set route file: %s, method: %s, type: %s ', curItem.file, curItem.method, curItem.type );
 	}
     app.use('/', router);
 }

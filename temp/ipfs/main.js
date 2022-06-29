@@ -7,7 +7,8 @@ const app = express();
 const ipfs = ipfsAPI('ipfs.infura.io', '5001', {protocol: 'https'})
 
 //Reading file from computer
-let testFile = fs.readFileSync("D:/doc/icon/com.publishinc.app.publishid_1.png");
+//let testFile = fs.readFileSync("D:/doc/icon/com.publishinc.app.publishid_1.png");
+let testFile = fs.readFileSync("D:/doc/icon/man-01.png");
 //Creating buffer for ipfs function to add file to the system
 let testBuffer = new Buffer(testFile);
 
@@ -19,7 +20,7 @@ app.get('/addfile', function(req, res) {
           console.log(err);
         }
         console.log(file)
-        res.end( file );
+        //res.end( file );
       })
       res.statusCode = 200;
 })
@@ -27,8 +28,9 @@ app.get('/addfile', function(req, res) {
 app.get('/getfile', function(req, res) {
     
     //This hash is returned hash of addFile router.
-    const validCID = 'QmYBzrkNqyNnW6HcXfUvpnPmoPRy75wJVhAgCudyjshf2N'
-            
+//    const validCID = 'QmYBzrkNqyNnW6HcXfUvpnPmoPRy75wJVhAgCudyjshf2N'
+    const validCID = 'QmT1RM7DopzM23N8mGmwDCsFF9GyAM1S8mbpLZnLiLeUkR'
+
     ipfs.files.get(validCID, function (err, files) {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'image/png');

@@ -11,7 +11,7 @@ const {_getFsFilePath}  = require('./utils/fs')
 
 const {CONFIG}          = require('../../config/config')
 
-var _download = async function( _req, _res){
+var _download = async function( _req, _res ){
 
     try {
         let filePath = await _getFsFilePath( CONFIG.repository.path, _req.params.cid );
