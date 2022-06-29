@@ -234,28 +234,29 @@ async function main07() {
   for( var i=0; i<Number(poolSize[0]); i++ ){
 
     var poolInfo    = await InquerySPPoolnfo( obj[2][0 + (i*3)] );
-
+    
     var query1  = {
       findone: { 
-        "_source.contract": poolInfo[0]
+        "_id": poolInfo[0]
       }
     }
     var query2  = {
       findone: { 
-        "_source.contract": poolInfo[3]
+        "_id": poolInfo[3]
       }
-    }    
+    }
+
     var res1      = await QueryFromMongo( "tokens", query1 );
     var res2      = await QueryFromMongo( "tokens", query2 );
     let swapPool  = {
       tokens: {
           first: {
-            contract:       res1.contract,
+            contract:       poolInfo[0],
             symbol:         res1.symbol,
             icon:           res1.icon,
           },
           second: {
-            contract:       res2.contract,
+            contract:       poolInfo[3],
             symbol:         res2.symbol,
             icon:           res2.icon,
           }
@@ -264,6 +265,10 @@ async function main07() {
           sp:     obj[2][0 + (i*3)],    //swappool
           holder: obj[2][1 + (i*3)],    //holder
           lpt:    obj[2][2 + (i*3)],    //lpt
+      },
+      block: {
+        number: 0,
+        tx: 0,
       },
       assets: {
         first: 0,
@@ -283,16 +288,17 @@ async function main07() {
         }
       },
     }
-    UpsertToMongo( 'swappools', i+1, swapPool );
+    console.log( swapPool );
+    //UpsertToMongo( 'swappools', i+1, swapPool );
   }
  
 }
-//main07()
+main07()
 
 //regist token
 async function main08() {
 
-    var index = 5;
+    var index = 1;
     var token = await InqueryTMToken( index );
     console.log( token[0] );
     var symbol = await Symbol( token[0] );
@@ -301,16 +307,15 @@ async function main08() {
     console.log( grade[0] );
 
     let tokenInfo = {
-      contract: token[0],
       symbol:  symbol[0],
       icon: 'http://',
       grade: grade[0],
     }
 
-    UpsertToMongo( 'tokens', index, tokenInfo );
+    UpsertToMongo( 'tokens', token[0], tokenInfo );
 
 }
-//main08();
+main08();
 
 function  getRandomInt(min, max) { //min ~ max 사이의 임의의 정수 반환    
   return Math.floor(Math.random() * (max - min)) + min;
@@ -460,4 +465,4 @@ async function main11() {
 */
 
 }
-main11();
+//main11();
