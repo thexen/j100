@@ -3,24 +3,17 @@ const util = require('util')
 let swapPools   = [];
 
 var _naviSeed = function( ) {
+    // query paris info
+    const method    = "POST";
+    const url       = "http://127.0.0.1:8080/restapi/find/pairs";
+    const data      = { query: { find: {} } };
+    let res = await HttpRequest(method, url, data);
+    // console.log(JSON.stringify(res, null, 4));
 
-    swapPools = [ 
-        {
-            pair: [ '0x21CB1A627380BAdAeF180e1346479d242aca90D3', '0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e' ],
-        },
-        {
-            pair: [ '0x658a3a6065E16FE42D8a51CC00b0870e850909F5', '0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e' ],
-        },
-        {
-            pair: [ '0x658a3a6065E16FE42D8a51CC00b0870e850909F5', '0x0000000000000000000000000000000000000000' ],
-        },
-        {
-            pair: [ '0x21CB1A627380BAdAeF180e1346479d242aca90D3', '0x658a3a6065E16FE42D8a51CC00b0870e850909F5' ],
-        },
-        {
-            pair: [ '0xfe8c5F82DD2D74e344f94a19Be0bf1BBb59DDFdb', '0x21CB1A627380BAdAeF180e1346479d242aca90D3' ],
-        }
-    ];
+    // set swap pool info
+    res.data.forEach(function (item) {
+        swapPools.push({ pair: [item._source.first, item._source.second] });
+    });
 }
 
 _naviSeed();

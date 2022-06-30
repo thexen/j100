@@ -7,7 +7,7 @@
 
 const { AbiEncode }                                             = require ( '../utils/abi.js' );
 const { OpenWalletFromPrivateKey, OpenWalletFromKeystoreV3, OpenWalletFromMnemonic, OpenHDWallet } = require( '../wallet/import.js' );
-const { DiscoveryFirstMiddleiRoute, DiscoveryRoutes, DiscoveryMiddleiRoutes } = require ( '../routing/swapHelpRouter.js' );
+const { SetSwapPoolInfo, DiscoveryFirstMiddleiRoute, DiscoveryRoutes, DiscoveryMiddleiRoutes } = require ( '../routing/swapHelpRouter.js' );
 const { QueryChain, QueryWS, GetWeb3 }                          =  require ( './networks/active.js' );
 const { GetContract }                                           =  require ( './contracts/contracts.js' );
 const { SHExchange, Test }                                      =  require ( './klaytn/swapHelper.js' );
@@ -136,6 +136,9 @@ async function main03() {
 
 //라우팅(경로) 구하기 예제
 async function main04() {
+
+    // set swap pool info
+    await SetSwapPoolInfo();
 
     //중간 경로 구하기 
     var middleRoute       = DiscoveryFirstMiddleiRoute( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
