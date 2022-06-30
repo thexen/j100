@@ -1,8 +1,9 @@
-const util = require('util')
+const util              = require('util')
+const {HttpRequest}     = require('../../common/utils/request/request.js')
 
 let swapPools   = [];
 
-var _naviSeed = function( ) {
+var _naviSeed = async function( ) {
     // query paris info
     const method    = "POST";
     const url       = "http://127.0.0.1:8080/restapi/find/pairs";
