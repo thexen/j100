@@ -3,7 +3,7 @@ const {HttpRequest}     = require('../../common/utils/request/request.js')
 
 let swapPools   = [];
 
-var _naviSeed = async function( ) {
+var _naviSeed = async function() {
     // query paris info
     const method    = "POST";
     const url       = "http://127.0.0.1:8080/restapi/find/pairs";
@@ -19,11 +19,32 @@ var _naviSeed = async function( ) {
 
 _naviSeed();
 
-let tokens = [ '0x658a3a6065E16FE42D8a51CC00b0870e850909F5'
-                , '0xAeEa7333B0658158121FAbDB579d49DD10b57950'
-                , '0x0000000000000000000000000000000000000000'
-                , '0x21CB1A627380BAdAeF180e1346479d242aca90D3'
-                , '0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e' ];
+let tokens = [];
+const _setTokenInfo = async function(conGrade) {
+    // query tokens info
+    const method    = "POST";
+    const url       = "http://127.0.0.1:8080/restapi/find/tokens";
+    const data      = {
+        query: {
+            find: {
+                '_source.grade' : {
+                    '$lte':Number(conGrade)
+                }
+            }
+        }
+    };
+
+    let res = await HttpRequest(method, url, data);
+    //console.log(JSON.stringify(res, null, 4));
+
+    // set token info
+    res.data.forEach(function(item){
+        tokens.push(item._source.contract);
+    })
+    // console.log(tokens);
+}
+
+_setTokenInfo(5);
 
 const _getPermutations = (array, selectNumber) => {
     const results = [];
@@ -232,8 +253,10 @@ var _discoveryMiddleRoutes = function( from, to, waypointCount ) {
     }          
 }
 
-//setswap pool info
+//set swap pool info
 module.exports.SetSwapPoolInfo                  = _naviSeed;
+//set token info
+module.exports.SetTokenInfo                     = _setTokenInfo;
 //모든 중간 경로의 swap pool 정보 구하기
 module.exports.DiscoveryRoutes                  = _discoverySwapRoute;
 //모든 중간 경로중 처음 발견된 경로 구하기
