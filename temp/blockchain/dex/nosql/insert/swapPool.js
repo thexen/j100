@@ -51,7 +51,7 @@ const { UpsertToMongo, QueryFromMongo, FindToModify }                         = 
 
 */
 
-async function _insertSwapPool( firstToken, secondToken, sp, holder, lpt, block ) {
+async function _insertSwapPool( index, firstToken, secondToken, sp, holder, lpt, block ) {
  
     let swapPoolInfo  = {
         tokens: {
@@ -59,6 +59,7 @@ async function _insertSwapPool( firstToken, secondToken, sp, holder, lpt, block 
             second:         secondToken,
         },
         contracts: { 
+            sp:             sp,
             holder:         holder,
             lpt:            lpt,
         },
@@ -82,10 +83,25 @@ async function _insertSwapPool( firstToken, secondToken, sp, holder, lpt, block 
         },
     }
 
-    UpsertToMongo( 'swappools', sp, swapPoolInfo );
+    //console.log( JSON.stringify( swapPoolInfo, null, 2 ) )
+    UpsertToMongo( 'swappools', index, swapPoolInfo );
+    _insertPair( index, sp, firstToken.contract, secondToken.contract );
    
   }
 
+  async function _insertPair( index, sp, firstToken, secondToken ) {
+
+    var pair = {
+        sp:             sp,
+        first:          firstToken,
+        second:         secondToken
+    };
+
+    UpsertToMongo( 'pairs', index, pair );
+
+}
+
+  /*
   async function _insertPair( firstToken, secondToken ) {
 
     var pair = {
@@ -113,30 +129,34 @@ async function _insertSwapPool( firstToken, secondToken, sp, holder, lpt, block 
     console.log( res1 );
 
   }
+  */
 
   async function test() {
    
     //CreateSwapPool Event 감지
     
     //Token Contract 조회
+    var index   = 4;
     var first   = '0x21CB1A627380BAdAeF180e1346479d242aca90D3';
-    var second  = '0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e';
-    var sp      = '0x6a72Ffb94a5E24529fa27107297CcdccF7C95E8B';
-    var holder  = '0x6ee6bE58DBa446dDdb75B2d979cEd3c3d6196196';
-    var lpt     = '0x74483151DDF9147320C2649397F3844fB0147D44';
+    var second  = '0x658a3a6065E16FE42D8a51CC00b0870e850909F5';
+    var sp      = '0x1b4aec06E2dB060333B610A53C8AcF25c8EF2c02';
+    var holder  = '0x39ceB2fb68e75A7a276e2126c66aAb38F6b50e09';
+    var lpt     = '0xce6dd7ceAed8a2198573aE318CE71e96397dbCF1';
     var block   = {
-        number:     93696482,
-        tx:         '0x47cbe30c9b4f18c5523c92cc10304277ddd3952857f04bb2c04c9a1060c40ab9',
+        //number:     93696482,
+        //tx:         '0x47cbe30c9b4f18c5523c92cc10304277ddd3952857f04bb2c04c9a1060c40ab9',
+        number: 0,
+        tx: 0,
     };
 
     var query1     = {
         findone: { 
-          "_id": first
+          "_source.contract": first
         }
       }
     var query2  = {
         findone: { 
-            "_id": second
+            "_source.contract": second
         }
     }    
     var res1      = await QueryFromMongo( "tokens", query1 );
@@ -155,12 +175,11 @@ async function _insertSwapPool( firstToken, secondToken, sp, holder, lpt, block 
     };    
 
     //Token Contract 조회
-    _insertSwapPool( firstToken, secodToken, sp, holder, lpt, block );
+    _insertSwapPool( index, firstToken, secodToken, sp, holder, lpt, block );
 
   }
 
-  //test();
-
-  _insertPair();
+test();
+//_insertPair( 1, '0x6a72Ffb94a5E24529fa27107297CcdccF7C95E8B', '0x21CB1A627380BAdAeF180e1346479d242aca90D3', '0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e');
 
   module.exports.insertSwapPool     = _insertSwapPool;

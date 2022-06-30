@@ -7,7 +7,6 @@
 const { UpsertToMongo, QueryFromMongo }                         =  require ( '../../../../common/chains/mongo/call.js' );
 
 /*
- 
     let token  = {
         symbol: symbol,
         icon: icon,
@@ -19,22 +18,30 @@ const { UpsertToMongo, QueryFromMongo }                         =  require ( '..
 
 */
 
-async function _insertToken( token, symbol, icon, block ) {
+async function _insertToken( index, token, symbol, icon, block ) {
  
     let tokenInfo  = {
-        symbol: symbol,
-        icon:   icon,
-        block:  block,
+        contract:   token,
+        symbol:     symbol,
+        icon:       icon,
+        block:      block,
     }
 
-    UpsertToMongo( 'tokens', token, tokenInfo );
+    UpsertToMongo( 'tokens', index, tokenInfo );
    
   }
 
   async function test() {
    
+    var query1 = {
+            find: { 
+                "_source.grade": {'$gte': 4 }
+            }
+        }
+  
+    var res1      = await QueryFromMongo( "tokens", query1 );
 
-
+    console.log( res1 );
   }
 
   test();

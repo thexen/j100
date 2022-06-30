@@ -237,12 +237,12 @@ async function main07() {
     
     var query1  = {
       findone: { 
-        "_id": poolInfo[0]
+        "_source.contract": poolInfo[0]
       }
     }
     var query2  = {
       findone: { 
-        "_id": poolInfo[3]
+        "_source.contract": poolInfo[3]
       }
     }
 
@@ -288,7 +288,11 @@ async function main07() {
         }
       },
     }
-    console.log( swapPool );
+    console.log( "--------------")
+    console.log( i + 1 );
+    console.log( "--------------")
+    console.log( JSON.stringify( swapPool, null, 2 ) );
+    //console.log( obj[2][0 + (i*3)] );
     //UpsertToMongo( 'swappools', i+1, swapPool );
   }
  
@@ -298,7 +302,7 @@ main07()
 //regist token
 async function main08() {
 
-    var index = 1;
+    var index = 5;
     var token = await InqueryTMToken( index );
     console.log( token[0] );
     var symbol = await Symbol( token[0] );
@@ -307,15 +311,15 @@ async function main08() {
     console.log( grade[0] );
 
     let tokenInfo = {
+      contract: token[0],
       symbol:  symbol[0],
       icon: 'http://',
-      grade: grade[0],
+      grade: Number(grade[0]),
     }
-
-    UpsertToMongo( 'tokens', token[0], tokenInfo );
+    UpsertToMongo( 'tokens', index, tokenInfo );
 
 }
-main08();
+//main08();
 
 function  getRandomInt(min, max) { //min ~ max 사이의 임의의 정수 반환    
   return Math.floor(Math.random() * (max - min)) + min;
