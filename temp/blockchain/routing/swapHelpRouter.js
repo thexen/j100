@@ -232,6 +232,8 @@ var _discoveryMiddleRoutes = function( from, to, waypointCount ) {
     }          
 }
 
+//setswap pool info
+module.exports.SetSwapPoolInfo                  = _naviSeed;
 //모든 중간 경로의 swap pool 정보 구하기
 module.exports.DiscoveryRoutes                  = _discoverySwapRoute;
 //모든 중간 경로중 처음 발견된 경로 구하기
