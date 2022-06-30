@@ -83,9 +83,9 @@ async function _insertSwapPool( index, firstToken, secondToken, sp, holder, lpt,
         },
     }
 
-    //console.log( JSON.stringify( swapPoolInfo, null, 2 ) )
-    UpsertToMongo( 'swappools', index, swapPoolInfo );
-    _insertPair( index, sp, firstToken.contract, secondToken.contract );
+    console.log( JSON.stringify( swapPoolInfo, null, 2 ) )
+    //UpsertToMongo( 'swappools', index, swapPoolInfo );
+    //_insertPair( index, sp, firstToken.contract, secondToken.contract );
    
   }
 

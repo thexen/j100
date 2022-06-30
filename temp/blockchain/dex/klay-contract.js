@@ -29,7 +29,8 @@ const { InqueryLSHStakingRewardConst }                          =  require ( './
 const { CalcMiningAmount }                                      =  require ( './utils/mining/calcMiningAmount.js' );
 const { BalanceOf, Symbol, Allowance }                          =  require ( './inquery/erc20.js' );
 const { UpsertToMongo, QueryFromMongo }                         =  require ( '../../common/chains/mongo/call.js' );
-const { default: Web3 } = require('web3');
+const {insertSwapPool }                                         =  require ( './nosql/insert/swapPool.js' );
+
 
 
 async function main00() {
@@ -237,8 +238,14 @@ async function main07() {
   for( var i=0; i<Number(poolSize[0]); i++ ){
 
     var poolInfo    = await InquerySPPoolnfo( obj[2][0 + (i*3)] );
-    
-    var query1  = {
+
+    console.log( "--------------")
+    console.log( i + 1 );
+    console.log( "--------------")
+    //onsole.log( JSON.stringify( swapPool, null, 2 ) );
+    //console.log( obj[2][0 + (i*3)] );
+    //UpsertToMongo( 'swappools', i+1, swapPool );
+    var query1     = {
       findone: { 
         "_source.contract": poolInfo[0]
       }
@@ -247,56 +254,22 @@ async function main07() {
       findone: { 
         "_source.contract": poolInfo[3]
       }
-    }
-
+    }    
     var res1      = await QueryFromMongo( "tokens", query1 );
     var res2      = await QueryFromMongo( "tokens", query2 );
-    let swapPool  = {
-      tokens: {
-          first: {
-            contract:       poolInfo[0],
-            symbol:         res1.symbol,
-            icon:           res1.icon,
-          },
-          second: {
-            contract:       poolInfo[3],
-            symbol:         res2.symbol,
-            icon:           res2.icon,
-          }
-      },
-      contracts: { 
-          sp:     obj[2][0 + (i*3)],    //swappool
-          holder: obj[2][1 + (i*3)],    //holder
-          lpt:    obj[2][2 + (i*3)],    //lpt
-      },
-      block: {
-        number: 0,
-        tx: 0,
-      },
-      assets: {
-        first: 0,
-        second: 0,
-        totalSupply: 0, //LPT 발행수    
-      },
-      stat: {
-        thirtyDays: { //30일간 누적 통계
-          tradingVolume: {
-            first: 0,
-            second: 0,
-          },
-          income: {
-            first: 0,
-            second: 0,
-          }
-        }
-      },
-    }
-    console.log( "--------------")
-    console.log( i + 1 );
-    console.log( "--------------")
-    console.log( JSON.stringify( swapPool, null, 2 ) );
-    //console.log( obj[2][0 + (i*3)] );
-    //UpsertToMongo( 'swappools', i+1, swapPool );
+
+    var firstToken = {
+        contract:       poolInfo[0],
+        symbol:         res1.symbol,
+        icon:           res1.icon,
+    };
+
+    var secodToken = {
+        contract:       poolInfo[3],
+        symbol:         res2.symbol,
+        icon:           res2.icon,
+    };     
+    insertSwapPool( i + 1, firstToken, secodToken, obj[2][0 + (i*3)], obj[2][1 + (i*3)], obj[2][2 + (i*3)],  {number: 0,tx: 0,} ); 
   }
  
 }
@@ -305,21 +278,31 @@ main07()
 //regist token
 async function main08() {
 
-    var index = 5;
-    var token = await InqueryTMToken( index );
-    console.log( token[0] );
-    var symbol = await Symbol( token[0] );
-    console.log( symbol[0] );
-    var grade = await InqueryTMTokenGrade( token[0] );
-    console.log( grade[0] );
+    var res =  await InqueryTMTokenCount();
 
-    let tokenInfo = {
-      contract: token[0],
-      symbol:  symbol[0],
-      icon: 'http://',
-      grade: Number(grade[0]),
-    }
-    UpsertToMongo( 'tokens', index, tokenInfo );
+    for( var i = 1; i<= Number(res[0]); i++ ){
+      var token   = await InqueryTMToken( i );
+      console.log(  token );
+      var symbol  = undefined;
+      var grade   = undefined;
+
+      if( token[0] == '0x0000000000000000000000000000000000000000' ) {
+        symbol  = 'klay';        
+      } else  {
+        symbol  = await Symbol( token[0] );
+        symbol  = symbol[0];
+      }
+      grade   = await InqueryTMTokenGrade( token[0] );
+
+      let tokenInfo = {
+        contract: token[0],
+        symbol:  symbol,
+        icon: 'http://',
+        grade: Number(grade[0]),
+      }
+      console.log( JSON.stringify( tokenInfo, null, 2 ) );
+      //UpsertToMongo( 'tokens', index, tokenInfo );
+  }
 
 }
 //main08();
