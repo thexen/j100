@@ -16,6 +16,9 @@ function _getAbiSetToken() {
           name: 'method',
           indexed: true
       },{
+          type: 'uint256',
+          name: 'index',
+      },{
           type: 'address',
           name: 'token',
       },{

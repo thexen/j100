@@ -12,27 +12,30 @@ function _getAbiCreateSwapPool() {
         name: 'CreateSwapPool',
         inputs: [
           {
-              type: 'function',
-              name: 'method',
-              indexed: true
+                type: 'function',
+                name: 'method',
+                indexed: true
           },{
-              type: 'address',
-              name: 'firstToken',
+                type: 'uint256',
+                name: 'index',
           },{
-              type: 'address',
-              name: 'secondToken',
+                type: 'address',
+                name: 'firstToken',
           },{
-              type: 'address',
-              name: 'sp',
+                type: 'address',
+                name: 'secondToken',
           },{
-              type: 'address',
-              name: 'holder',
+                type: 'address',
+                name: 'sp',
           },{
-              type: 'address',
-              name: 'lpt',
+                type: 'address',
+                name: 'holder',
           },{
-              type: 'uint256',
-              name: 'fee',
+                type: 'address',
+                name: 'lpt',
+          },{
+                type: 'uint256',
+                name: 'fee',
           }
         ]
     }
