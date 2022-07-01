@@ -18,17 +18,15 @@ const { UpsertToMongo, QueryFromMongo }                         =  require ( '..
 
 */
 
-async function _invokeToken( index, token, symbol, icon, block ) {
+async function _invokeToken( index, token, symbol, icon, grade ) {
  
     let tokenInfo  = {
         contract:   token,
         symbol:     symbol,
         icon:       icon,
-        block:      block,
+        grade:      grade,
     }
-
     UpsertToMongo( 'tokens', index, tokenInfo );
-   
 }
 
 async function test() {
@@ -44,6 +42,6 @@ async function test() {
     console.log( res1 );
 }
 
-test();
+//test();
 
 module.exports.invokeToken     = _invokeToken;

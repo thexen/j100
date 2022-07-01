@@ -7,11 +7,11 @@
 
 const { AbiEncode }                                             = require ( '../utils/abi.js' );
 const { OpenWalletFromPrivateKey, OpenWalletFromKeystoreV3, OpenWalletFromMnemonic, OpenHDWallet } = require( '../wallet/import.js' );
-const { SetSwapPoolInfo,
-        SetTokenInfo,
+const { LoadPairs,
+        LoadTokens,
         DiscoveryFirstMiddleiRoute,
         DiscoveryRoutes,
-        DiscoveryMiddleiRoutes
+        DiscoveryMiddleiRoutes,
       }                                                         = require ( '../routing/swapHelpRouter.js' );
 const { QueryChain, QueryWS, GetWeb3 }                          =  require ( './networks/active.js' );
 const { GetContract }                                           =  require ( './contracts/contracts.js' );
@@ -145,25 +145,25 @@ async function main03() {
 async function main04() {
 
     // set swap pool info
-    await SetSwapPoolInfo();
+    var pairs = await LoadPairs();
 
     // set token info
-    await SetTokenInfo(5);
+    var tokens = await LoadTokens(5);
 
     //중간 경로 구하기 
-    var middleRoute       = DiscoveryFirstMiddleiRoute( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
+    var middleRoute       = DiscoveryFirstMiddleiRoute( pairs, tokens, "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
                           , "0x658a3a6065E16FE42D8a51CC00b0870e850909F5"
                           , 5 );
     console.log( middleRoute );                          
     
     //모든 경로의 swap pool 정보 구하기
-    var routes            = DiscoveryRoutes( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
+    var routes            = DiscoveryRoutes( pairs, tokens, "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
                             , "0x658a3a6065E16FE42D8a51CC00b0870e850909F5"
                             , 5 );
     console.log( JSON.stringify( routes, null, 2 ) );        
         
     //모든 중간 경로 구하기
-    var middleRoutes      = DiscoveryMiddleiRoutes( "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
+    var middleRoutes      = DiscoveryMiddleiRoutes( pairs, tokens, "0x21CB1A627380BAdAeF180e1346479d242aca90D3"
                           , "0x658a3a6065E16FE42D8a51CC00b0870e850909F5"
                           , 5 );
     console.log( JSON.stringify( middleRoutes, null, 2 ) );       
@@ -248,9 +248,6 @@ async function main07() {
 
     var poolInfo    = await InquerySPPoolnfo( obj[2][0 + (i*3)] );
 
-    console.log( "--------------")
-    console.log( i + 1 );
-    console.log( "--------------")
     //onsole.log( JSON.stringify( swapPool, null, 2 ) );
     //console.log( obj[2][0 + (i*3)] );
     //UpsertToMongo( 'swappools', i+1, swapPool );
@@ -286,7 +283,7 @@ async function main07() {
     };
 
     //console.log( poolInfo )     
-    invokeSwapPool( i + 1, firstToken, secodToken, obj[2][0 + (i*3)], obj[2][1 + (i*3)], obj[2][2 + (i*3)],  assets, {number: 0,tx: 0,} ); 
+    invokeSwapPool( i + 1, firstToken, secodToken, obj[2][0 + (i*3)], obj[2][1 + (i*3)], obj[2][2 + (i*3)],  poolInfo[8], assets, {number: 0,tx: 0,} ); 
   }
  
 }
@@ -294,12 +291,11 @@ main07()
 
 //regist token
 async function main08() {
-
     var res =  await InqueryTMTokenCount();
-
     for( var i = 1; i<= Number(res[0]); i++ ){
       var token   = await InqueryTMToken( i );
       console.log(  token );
+      
       var symbol  = undefined;
       var grade   = undefined;
 
@@ -318,10 +314,10 @@ async function main08() {
         icon: 'http://',
         grade: Number(grade[0]),
       }
-      //console.log( JSON.stringify( tokenInfo, null, 2 ) );
+      
       UpsertToMongo( 'tokens', i, tokenInfo );
       */
-      invokeToken( i, token[0], symbol, 'http://', Number(grade[0]) )
+    invokeToken( i, token[0], symbol, 'http://', Number(grade[0]) )
   }
 
 }

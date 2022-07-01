@@ -1,50 +1,58 @@
 const util              = require('util')
 const {HttpRequest}     = require('../../common/utils/request/request.js')
 
-let swapPools   = [];
 
-var _naviSeed = async function() {
-    // query paris info
-    const method    = "POST";
-    const url       = "http://127.0.0.1:8080/restapi/search/query";
-    const data      = { collection: 'pairs', query: { find: {} } };
-    let res = await HttpRequest(method, url, data);
-    // console.log(JSON.stringify(res, null, 4));
+var _loadPairs = async function() {
 
-    // set swap pool info
-    res.data.forEach(function (item) {
-        swapPools.push({ pair: [item._source.first, item._source.second] });
-    });
+    let     pairs       = [];
+    try{
+        const   method      = "POST";
+        const   url         = "http://127.0.0.1:8080/restapi/search/query";
+        const   data        = { collection: 'pairs', query: { find: {} } };
+        let     res         = await HttpRequest(method, url, data);
+
+        // set swap pool info
+        res.data.forEach(function (item) {
+            pairs.push({ pair: [item._source.first, item._source.second] });
+        });
+        return pairs;
+    } catch( e ) {
+
+    } finally {
+        pairs = undefined;
+    }
 }
 
-//_naviSeed();
-
-let tokens = [];
-const _setTokenInfo = async function(conGrade) {
-    // query tokens info
-    const method    = "POST";
-    const url       = "http://127.0.0.1:8080/restapi/search/query";
-    const data      = {
-        collection: 'tokens',
-        query: {
-            find: {
-                '_source.grade' : {
-                    '$lte':Number(conGrade)
+const _loadTokens = async function( grade ) {
+    
+    let tokens = [];
+    try{
+        const method    = "POST";
+        const url       = "http://127.0.0.1:8080/restapi/search/query";
+        const data      = {
+            collection: 'tokens',
+            query: {
+                find: {
+                    '_source.grade' : {
+                        '$lte':Number(grade)
+                    }
                 }
             }
-        }
-    };
+        };
 
-    let res = await HttpRequest(method, url, data);
-    //console.log(JSON.stringify(res, null, 4));
+        let res = await HttpRequest(method, url, data);
 
-    // set token info
-    res.data.forEach(function(item){
-        tokens.push(item._source.contract);
-    })
-    // console.log(tokens);
+        // set token info
+        res.data.forEach(function(item){
+            tokens.push(item._source.contract);
+        })
+        return tokens;
+    } catch( e ) {
+
+    } finally {
+        tokens = undefined;
+    }
 }
-//_setTokenInfo(5);
 
 const _getPermutations = (array, selectNumber) => {
     const results = [];
@@ -52,16 +60,16 @@ const _getPermutations = (array, selectNumber) => {
     return array.map((element) => [element]);
     }
     array.forEach((fixed, index, origin) => {
-    const rest = [...origin.slice(0, index), ...origin.slice(index + 1)];
-    const permutations = _getPermutations(rest, selectNumber - 1);
-    const attached = permutations.map((permutation) => [fixed, ...permutation]);
+    const rest          = [...origin.slice(0, index), ...origin.slice(index + 1)];
+    const permutations  = _getPermutations(rest, selectNumber - 1);
+    const attached      = permutations.map((permutation) => [fixed, ...permutation]);
 
     results.push(...attached);
     });
     return results;
 };
 
-var _getMiddlePaths = function( from, to, waypointCount )  {
+var _getMiddlePaths = function( tokens, from, to, waypointCount )  {
     let res             = [];
     let middleNodes     = [];
     try{
@@ -88,8 +96,8 @@ var _getMiddlePaths = function( from, to, waypointCount )  {
     }
 }
 
-var _getSwapPoolRoutes = function( from, to, waypointCount, debug ) {
-    var res         = _getMiddlePaths(from, to, waypointCount);
+var _getSwapPoolRoutes = function( tokens, from, to, waypointCount, debug ) {
+    var res         = _getMiddlePaths( tokens, from, to, waypointCount);
     var swapPaths   = [];
 
     var swapPath    = [];
@@ -140,7 +148,7 @@ var _getSwapPoolRoutes = function( from, to, waypointCount, debug ) {
     }    
 }
 
-var _discoverySwapRoute = function( from, to, waypointCount ) {
+var _discoverySwapRoute = function( pairs, tokens, from, to, waypointCount ) {
 
     var swapRoutes = {
         swap_route:     undefined,
@@ -149,7 +157,7 @@ var _discoverySwapRoute = function( from, to, waypointCount ) {
     };
     var brokenPaths         = [];
 
-    swapRoutes.swap_route   = _getSwapPoolRoutes( from, to, waypointCount );
+    swapRoutes.swap_route   = _getSwapPoolRoutes( tokens, from, to, waypointCount );
     try{    
 
         //모든 경로에서 최적화 경로를 검색한다.
@@ -162,9 +170,9 @@ var _discoverySwapRoute = function( from, to, waypointCount ) {
             for( var k=0; k<swapRoutes.swap_route[i].length; k++ ) {
                 //중간 경로에 해당 되는 Swap Pool 검색
                 bFound          = false;
-                for( var j=0; j<swapPools.length; j++ ) {
-                    if( ( swapPools[j].pair[0] == swapRoutes.swap_route[i][k][0] || swapPools[j].pair[1] == swapRoutes.swap_route[i][k][0] ) 
-                        && ( swapPools[j].pair[0] == swapRoutes.swap_route[i][k][1] || swapPools[j].pair[1] == swapRoutes.swap_route[i][k][1] ) ){
+                for( var j=0; j<pairs.length; j++ ) {
+                    if( ( pairs[j].pair[0] == swapRoutes.swap_route[i][k][0] || pairs[j].pair[1] == swapRoutes.swap_route[i][k][0] ) 
+                        && ( pairs[j].pair[0] == swapRoutes.swap_route[i][k][1] || pairs[j].pair[1] == swapRoutes.swap_route[i][k][1] ) ){
                         var info = {}
                         info[ 'from' ]      = { token: swapRoutes.swap_route[i][k][0], balance: 0 };
                         info[ 'to' ]        = { token: swapRoutes.swap_route[i][k][1], balance: 0 };
@@ -202,10 +210,10 @@ var _discoverySwapRoute = function( from, to, waypointCount ) {
     }
 }
 
-var _discoveryFirstMiddleRoute = function( from, to, waypointCount ) {
+var _discoveryFirstMiddleRoute = function( pairs, tokens, from, to, waypointCount ) {
     try{
         var exploredRoute = [];
-        var exploredswapRoutes = _discoverySwapRoute( from, to, waypointCount );
+        var exploredswapRoutes = _discoverySwapRoute( pairs, tokens, from, to, waypointCount );
         if( exploredswapRoutes.swap_route.length > 0 ) {
             if( exploredswapRoutes.swap_route[0].length > 1 ) {
                 for( var i=0; i<exploredswapRoutes.swap_route[0].length-1; i++ ){
@@ -225,10 +233,10 @@ var _discoveryFirstMiddleRoute = function( from, to, waypointCount ) {
     }        
 }
 
-var _discoveryMiddleRoutes = function( from, to, waypointCount ) {
+var _discoveryMiddleRoutes = function( pairs, tokens, from, to, waypointCount ) {
     try{
         var exploredRoutes = [];
-        var exploredswapRoutes = _discoverySwapRoute( from, to, waypointCount );
+        var exploredswapRoutes = _discoverySwapRoute( pairs, tokens, from, to, waypointCount );
         if( exploredswapRoutes.swap_route.length > 0 ) {
             for( var i=0; i<exploredswapRoutes.swap_route.length; i ++ ){
                 var exploredRoute = [];
@@ -254,9 +262,9 @@ var _discoveryMiddleRoutes = function( from, to, waypointCount ) {
 }
 
 //set swap pool info
-module.exports.SetSwapPoolInfo                  = _naviSeed;
+module.exports.LoadPairs                        = _loadPairs;
 //set token info
-module.exports.SetTokenInfo                     = _setTokenInfo;
+module.exports.LoadTokens                       = _loadTokens;
 //모든 중간 경로의 swap pool 정보 구하기
 module.exports.DiscoveryRoutes                  = _discoverySwapRoute;
 //모든 중간 경로중 처음 발견된 경로 구하기

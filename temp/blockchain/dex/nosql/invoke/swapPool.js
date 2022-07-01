@@ -50,7 +50,7 @@ const { UpsertToMongo, QueryFromMongo, FindToModify }                         = 
 
 */
 
-async function _invokeSwapPool( index, firstToken, secondToken, sp, holder, lpt, assets, block ) {
+async function _invokeSwapPool( index, firstToken, secondToken, sp, holder, lpt, fee, assets, block ) {
  
     let swapPoolInfo  = {
         tokens: {
@@ -62,7 +62,7 @@ async function _invokeSwapPool( index, firstToken, secondToken, sp, holder, lpt,
             holder:         holder,
             lpt:            lpt,
         },
-        block: block,
+        fee: fee,
         assets: assets,
         stat: {
             thirtyDays: { //30일간 누적 통계
@@ -76,20 +76,22 @@ async function _invokeSwapPool( index, firstToken, secondToken, sp, holder, lpt,
                 }
             }
         },
+        block: block,        
     }
 
     //console.log( JSON.stringify( swapPoolInfo, null, 2 ) )
     UpsertToMongo( 'swappools', index, swapPoolInfo );
-    _invokePair( index, sp, firstToken.contract, secondToken.contract, assets );
+    _invokePair( index, sp, firstToken.contract, secondToken.contract, fee, assets );
    
 }
 
-async function _invokePair( index, sp, firstToken, secondToken, assets ) {
+async function _invokePair( index, sp, firstToken, secondToken, fee, assets  ) {
 
     var pair = {
         sp:             sp,
         first:          firstToken,
         second:         secondToken,
+        fee:            fee,        
         assets:         assets,
     };
 

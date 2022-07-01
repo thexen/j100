@@ -14,8 +14,8 @@ admin 계정 정보
 db.auth("admin", "abcd0110");
 */
 //const mongoHost = 'mongodb://192.168.10.111:27017,192.168.10.113:27017,192.168.10.112:27018/dex_db';
-const mongoHost = 'mongodb://192.168.10.111:27017/dex_db';
-//const mongoHost = 'mongodb://192.168.1.33:27017/dex_db';
+//const mongoHost = 'mongodb://192.168.10.111:27017/dex_db';
+const mongoHost = 'mongodb://192.168.1.33:27017/dex_db';
 //const mongoHost = 'mongodb://10.10.0.121:27017/test_db';
 const mongoUser = "dexUser";
 const mongoPwd  = "dexUser";
@@ -124,11 +124,10 @@ async function _deleteFromMongo( _collection, _id ) {
 
 async function _queryFromFromMongo( _collection, _dslQuery ) {
     await _connect();
-    const databse = client.db();
-    const collection = databse.collection(_collection);
-
-    let value       = undefined;
-    let sliceTemp   = [];
+    const databse       = client.db();
+    const collection    = databse.collection(_collection);
+    let value           = undefined;
+    let sliceTemp       = [];
     try{
         if( _dslQuery == undefined ){
             throw Error( 'Requered DSLQuery.' );
