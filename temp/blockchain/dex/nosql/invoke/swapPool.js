@@ -94,7 +94,6 @@ async function _invokePair( index, sp, firstToken, secondToken, fee, assets  ) {
         fee:            fee,        
         assets:         assets,
     };
-
     UpsertToMongo( 'pairs', index, pair );
 
 }
