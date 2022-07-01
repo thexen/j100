@@ -34,7 +34,8 @@ const { InqueryLSHStakingRewardConst }                          =  require ( './
 const { CalcMiningAmount }                                      =  require ( './utils/mining/calcMiningAmount.js' );
 const { BalanceOf, Symbol, Allowance }                          =  require ( './inquery/erc20.js' );
 const { UpsertToMongo, QueryFromMongo }                         =  require ( '../../common/chains/mongo/call.js' );
-const {insertSwapPool }                                         =  require ( './nosql/insert/swapPool.js' );
+const {invokeSwapPool }                                         =  require ( './nosql/invoke/swapPool.js' );
+const {invokeToken }                                            =  require ( './nosql/invoke/token.js' );
 
 
 
@@ -276,8 +277,16 @@ async function main07() {
         contract:       poolInfo[3],
         symbol:         res2.symbol,
         icon:           res2.icon,
-    };     
-    insertSwapPool( i + 1, firstToken, secodToken, obj[2][0 + (i*3)], obj[2][1 + (i*3)], obj[2][2 + (i*3)],  {number: 0,tx: 0,} ); 
+    };
+
+    var assets = {
+      first:          poolInfo[1],
+      second:         poolInfo[4],
+      totalSupply:    poolInfo[9], 
+    };
+
+    //console.log( poolInfo )     
+    invokeSwapPool( i + 1, firstToken, secodToken, obj[2][0 + (i*3)], obj[2][1 + (i*3)], obj[2][2 + (i*3)],  assets, {number: 0,tx: 0,} ); 
   }
  
 }
@@ -302,14 +311,17 @@ async function main08() {
       }
       grade   = await InqueryTMTokenGrade( token[0] );
 
+      /*
       let tokenInfo = {
         contract: token[0],
         symbol:  symbol,
         icon: 'http://',
         grade: Number(grade[0]),
       }
-      console.log( JSON.stringify( tokenInfo, null, 2 ) );
-      //UpsertToMongo( 'tokens', index, tokenInfo );
+      //console.log( JSON.stringify( tokenInfo, null, 2 ) );
+      UpsertToMongo( 'tokens', i, tokenInfo );
+      */
+      invokeToken( i, token[0], symbol, 'http://', Number(grade[0]) )
   }
 
 }
@@ -318,7 +330,6 @@ async function main08() {
 function  getRandomInt(min, max) { //min ~ max 사이의 임의의 정수 반환    
   return Math.floor(Math.random() * (max - min)) + min;
 }
-
 
 async function main09() {
 

@@ -7,7 +7,6 @@
 const { UpsertToMongo, QueryFromMongo, FindToModify }                         =  require ( '../../../../common/chains/mongo/call.js' );
 
 /*
-
     let swapPool  = {
         tokens: {
             first: {
@@ -51,7 +50,7 @@ const { UpsertToMongo, QueryFromMongo, FindToModify }                         = 
 
 */
 
-async function _insertSwapPool( index, firstToken, secondToken, sp, holder, lpt, block ) {
+async function _invokeSwapPool( index, firstToken, secondToken, sp, holder, lpt, assets, block ) {
  
     let swapPoolInfo  = {
         tokens: {
@@ -64,11 +63,7 @@ async function _insertSwapPool( index, firstToken, secondToken, sp, holder, lpt,
             lpt:            lpt,
         },
         block: block,
-        assets: {
-            first:          0,
-            second:         0,
-            totalSupply:    0, //LPT 발행수    
-        },
+        assets: assets,
         stat: {
             thirtyDays: { //30일간 누적 통계
                 tradingVolume: {
@@ -83,23 +78,36 @@ async function _insertSwapPool( index, firstToken, secondToken, sp, holder, lpt,
         },
     }
 
-    console.log( JSON.stringify( swapPoolInfo, null, 2 ) )
-    //UpsertToMongo( 'swappools', index, swapPoolInfo );
-    //_insertPair( index, sp, firstToken.contract, secondToken.contract );
+    //console.log( JSON.stringify( swapPoolInfo, null, 2 ) )
+    UpsertToMongo( 'swappools', index, swapPoolInfo );
+    _invokePair( index, sp, firstToken.contract, secondToken.contract, assets );
    
-  }
+}
 
-  async function _insertPair( index, sp, firstToken, secondToken ) {
+async function _invokePair( index, sp, firstToken, secondToken, assets ) {
 
     var pair = {
         sp:             sp,
         first:          firstToken,
-        second:         secondToken
+        second:         secondToken,
+        assets:         assets,
     };
 
     UpsertToMongo( 'pairs', index, pair );
 
 }
+
+async function _invokeStat( index, assets ) {
+
+    var query = {
+        '_source.assets': assets,
+    };
+
+    UpsertToMongo( 'pairs',     index, query );
+    UpsertToMongo( 'swappools', index, query );
+
+}
+
 
   /*
   async function _insertPair( firstToken, secondToken ) {
@@ -174,12 +182,19 @@ async function _insertSwapPool( index, firstToken, secondToken, sp, holder, lpt,
         icon:           res2.icon,
     };    
 
+    var assets = {
+        first:          0,
+        second:         0,
+        totalSupply:    0, //LPT 발행수    
+    };
+
     //Token Contract 조회
-    _insertSwapPool( index, firstToken, secodToken, sp, holder, lpt, block );
+    _invokeSwapPool( index, firstToken, secodToken, sp, holder, lpt, assets, block );
 
   }
 
-test();
+//test();
 //_insertPair( 1, '0x6a72Ffb94a5E24529fa27107297CcdccF7C95E8B', '0x21CB1A627380BAdAeF180e1346479d242aca90D3', '0x950a8536720a9571EE73689a26Ed6A4a8fC94A3e');
 
-  module.exports.insertSwapPool     = _insertSwapPool;
+module.exports.invokeSwapPool     = _invokeSwapPool;
+module.exports.invokeStat         = _invokeStat;

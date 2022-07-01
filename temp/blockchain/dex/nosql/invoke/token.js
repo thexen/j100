@@ -18,7 +18,7 @@ const { UpsertToMongo, QueryFromMongo }                         =  require ( '..
 
 */
 
-async function _insertToken( index, token, symbol, icon, block ) {
+async function _invokeToken( index, token, symbol, icon, block ) {
  
     let tokenInfo  = {
         contract:   token,
@@ -29,21 +29,21 @@ async function _insertToken( index, token, symbol, icon, block ) {
 
     UpsertToMongo( 'tokens', index, tokenInfo );
    
-  }
+}
 
-  async function test() {
-   
+async function test() {
+
     var query1 = {
             find: { 
                 "_source.grade": {'$gte': 4 }
             }
         }
-  
+
     var res1      = await QueryFromMongo( "tokens", query1 );
 
     console.log( res1 );
-  }
+}
 
-  test();
+test();
 
-  module.exports.insertToken     = _insertToken;
+module.exports.invokeToken     = _invokeToken;

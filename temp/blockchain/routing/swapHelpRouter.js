@@ -6,8 +6,8 @@ let swapPools   = [];
 var _naviSeed = async function() {
     // query paris info
     const method    = "POST";
-    const url       = "http://127.0.0.1:8080/restapi/find/pairs";
-    const data      = { query: { find: {} } };
+    const url       = "http://127.0.0.1:8080/restapi/search/query";
+    const data      = { collection: 'pairs', query: { find: {} } };
     let res = await HttpRequest(method, url, data);
     // console.log(JSON.stringify(res, null, 4));
 
@@ -17,14 +17,15 @@ var _naviSeed = async function() {
     });
 }
 
-_naviSeed();
+//_naviSeed();
 
 let tokens = [];
 const _setTokenInfo = async function(conGrade) {
     // query tokens info
     const method    = "POST";
-    const url       = "http://127.0.0.1:8080/restapi/find/tokens";
+    const url       = "http://127.0.0.1:8080/restapi/search/query";
     const data      = {
+        collection: 'tokens',
         query: {
             find: {
                 '_source.grade' : {
@@ -43,8 +44,7 @@ const _setTokenInfo = async function(conGrade) {
     })
     // console.log(tokens);
 }
-
-_setTokenInfo(5);
+//_setTokenInfo(5);
 
 const _getPermutations = (array, selectNumber) => {
     const results = [];
