@@ -4,7 +4,7 @@
 
 
 */
-const { UpsertToMongo, QueryFromMongo, FindToModify }                         =  require ( '../../../../common/chains/mongo/call.js' );
+const { UpsertToMongo, QueryFromMongo, UpdateFromMongo, FindToModify }                         =  require ( '../../../../common/chains/mongo/call.js' );
 
 /*
     let swapPool  = {
@@ -99,17 +99,41 @@ async function _invokePair( index, sp, firstToken, secondToken, fee, assets  ) {
 
 }
 
-async function _invokeStat( index, assets ) {
+async function _invokeStat( sp, assets ) {
 
-    var query = {
+    var update = {
         '_source.assets': assets,
     };
 
-    UpsertToMongo( 'pairs',     index, query );
-    UpsertToMongo( 'swappools', index, query );
+    var query = {
+        '_source.sp': sp,
+    };
+    UpdateFromMongo( 'pairs',     query, update );
+
+    var query = {
+        '_source.contracts.sp': sp,
+    };
+    UpdateFromMongo( 'swappools', query, update );
 
 }
 
+async function _invokeFee( sp, fee ) {
+ 
+    var update = {
+        '_source.fee': fee,
+    };
+
+    var query = {
+        '_source.sp': sp,
+    };
+    UpdateFromMongo( 'pairs',     query, update );
+
+    var query = {
+        '_source.contracts.sp': sp,
+    };
+    UpdateFromMongo( 'swappools', query, update );
+
+}
 
   /*
   async function _insertPair( firstToken, secondToken ) {
@@ -200,3 +224,4 @@ async function _invokeStat( index, assets ) {
 
 module.exports.invokeSwapPool     = _invokeSwapPool;
 module.exports.invokeStat         = _invokeStat;
+module.exports.invokeFee          = _invokeFee;

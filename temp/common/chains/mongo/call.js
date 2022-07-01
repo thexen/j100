@@ -102,12 +102,12 @@ async function _updateToMogo( _collection, _query, _doc ) {
     }
 }
 
-async function _findToModify( _collection, _query, _update, _new ) {
+async function _findToModify( _collection, _query, _order, _update ) {
     await _connect();
     const databse = client.db();
     const collection = databse.collection(_collection);
     try{
-        return await collection.findAndModify( _query, _update, _new  );
+        return await collection.findAndModify( _query, _order, _update );
     } finally {
     }
 }
