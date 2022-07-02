@@ -30,6 +30,7 @@ module.exports = {
 
     { file: '../abi/teamVault.js',            abi: 'getAbiAddMember',           event: 'eventAddMember' }, 
     { file: '../abi/teamVault.js',            abi: 'getAbiRemoveMember',        event: 'eventRemoveMember' }, 
+    { file: '../abi/teamVault.js',            abi: 'getAbiProposal',            event: 'eventProposal' }, 
     { file: '../abi/teamVault.js',            abi: 'getAbiApproval',            event: 'eventApproval' }, 
     { file: '../abi/teamVault.js',            abi: 'getAbiInvoke',              event: 'eventInvoke' },             
 

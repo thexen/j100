@@ -24,7 +24,8 @@ function _getAbiAddMember() {
 } 
 
 function _addMember( eventLog, decodedEventLog ) {
-
+    console.log("Called _addMember ................")
+    console.log(decodedEventLog)
 }
 
 function _getAbiRemoveMember() {
@@ -46,7 +47,37 @@ function _getAbiRemoveMember() {
 }
 
 function _removeMember( eventLog, decodedEventLog ) {
+    console.log("Called _removeMember ................")
+    console.log(decodedEventLog)
+}
 
+function _getAbiProposal() {
+    var abi = {
+        type: 'event',
+        name: 'Proposal',        
+        inputs: [
+            {
+                type: 'function',
+                name: 'method',
+                indexed: true
+            },{
+                type: 'address',
+                name: 'approvor',
+            },{
+                type: 'uint256',
+                name: 'docId',
+            },{
+                type: 'bytes',
+                name: 'callData',
+            }
+        ]
+    }
+    return abi;
+}
+
+function _Proposal( eventLog, decodedEventLog ) {
+    console.log("Called _Proposal ................")
+    console.log(decodedEventLog)
 }
 
 function _getAbiApproval() {
@@ -71,7 +102,8 @@ function _getAbiApproval() {
 }
 
 function _approval( eventLog, decodedEventLog ) {
-
+    console.log("Called _approval ................")
+    console.log(decodedEventLog)
 }
 
 function _getAbiInvoke() {
@@ -96,7 +128,8 @@ function _getAbiInvoke() {
 }
 
 function _invoke( eventLog, decodedEventLog ) {
-
+    console.log("Called _invoke ................")
+    console.log(decodedEventLog)
 }
 
 module.exports.getAbiAddMember              = _getAbiAddMember;
@@ -104,6 +137,9 @@ module.exports.eventAddMember               = _addMember;
 
 module.exports.getAbiRemoveMember           = _getAbiRemoveMember;
 module.exports.eventRemoveMember            = _removeMember;
+
+module.exports.getAbiProposal               = _getAbiProposal;
+module.exports.eventProposal                = _Proposal;
 
 module.exports.getAbiApproval               = _getAbiApproval;
 module.exports.eventApproval                = _approval;
