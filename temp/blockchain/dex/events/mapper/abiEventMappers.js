@@ -34,6 +34,11 @@ module.exports = {
     { file: '../abi/teamVault.js',            abi: 'getAbiApproval',            event: 'eventApproval' }, 
     { file: '../abi/teamVault.js',            abi: 'getAbiInvoke',              event: 'eventInvoke' },             
 
+    { file: '../abi/swapPool.js',             abi: 'getAbiFounding',            event: 'eventFounding' }, 
+    { file: '../abi/swapPool.js',             abi: 'getAbiDeposit',             event: 'eventDeposit' },     
+    { file: '../abi/swapPool.js',             abi: 'getAbiWithdrawal',          event: 'eventWithdrawal' },         
+    { file: '../abi/swapPool.js',             abi: 'getAbiStatistics',          event: 'eventStatistics' },         
+
   ]
 
 }
