@@ -28,7 +28,8 @@ function _getAbiRegistObject() {
 } 
 
 function _registObject( eventLog, decodedEventLog ) {
-
+    console.log("Called _registObject ................")
+    console.log(decodedEventLog)
 }
 
 function _getAbiRegistPermission() {
@@ -58,7 +59,8 @@ function _getAbiRegistPermission() {
 }
 
 function _registPermission( eventLog, decodedEventLog ) {
-
+    console.log("Called _registPermission ................")
+    console.log(decodedEventLog)
 }
 
 module.exports.getAbiRegistObject             = _getAbiRegistObject;
