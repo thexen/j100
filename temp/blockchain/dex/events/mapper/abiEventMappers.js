@@ -38,6 +38,7 @@ module.exports = {
     { file: '../abi/swapPool.js',             abi: 'getAbiDeposit',             event: 'eventDeposit' },     
     { file: '../abi/swapPool.js',             abi: 'getAbiWithdrawal',          event: 'eventWithdrawal' },         
     { file: '../abi/swapPool.js',             abi: 'getAbiStatistics',          event: 'eventStatistics' },         
+    { file: '../abi/LPT.js',                  abi: 'getAbiEnhance',             event: 'eventEnhance' },         
 
   ]
 
