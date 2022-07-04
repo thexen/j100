@@ -4,7 +4,9 @@
 
 
 */
-const { QueryChain }                          =  require ( '../networks/active.js' );
+// const { QueryChain }                          =  require ( '../networks/active.js' );
+const Caver                                      =  require ( 'caver-js' );
+const caver = new Caver();
 
 async function _txLogger( tx, abiEventMapper ) {
 
@@ -19,8 +21,8 @@ async function _txLogger( tx, abiEventMapper ) {
   tx.logs.forEach( function( item ) {
     try{
       //TODO item.address << contract address 이므로 유효한 contract 인지 확인 할 것
-      var topicMethod       =  QueryChain().abi.decodeLog( optsTopics, undefined, item.topics );
-      var decodedLog        =  QueryChain().abi.decodeLog( abiEventMapper[topicMethod.method].inputs, item.data, item.topics );
+      var topicMethod       =  caver.abi.decodeLog( optsTopics, undefined, item.topics );
+      var decodedLog        =  caver.abi.decodeLog( abiEventMapper[topicMethod.method].inputs, item.data, item.topics );
       abiEventMapper[topicMethod.method].callBack( item, decodedLog );
     } catch( e ) {
     }
@@ -40,8 +42,8 @@ async function _logger( log, abiEventMapper ) {
 
   try{
     //TODO item.address << contract address 이므로 유효한 contract 인지 확인 할 것
-    var topicMethod       =  QueryChain().abi.decodeLog( optsTopics, undefined, log.topics );
-    var decodedLog        =  QueryChain().abi.decodeLog( abiEventMapper[topicMethod.method].inputs, log.data, log.topics );
+    var topicMethod       =  caver.abi.decodeLog( optsTopics, undefined, log.topics );
+    var decodedLog        =  caver.abi.decodeLog( abiEventMapper[topicMethod.method].inputs, log.data, log.topics );
     console.log( topicMethod.method );
     abiEventMapper[topicMethod.method].callBack( log, decodedLog );
   } catch( e ) {

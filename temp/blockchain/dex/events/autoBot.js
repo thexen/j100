@@ -4,10 +4,14 @@
 
 
 */
-const { QueryChain, QueryWS  }                                  =  require ( '../networks/active.js' );
+// const { QueryChain, QueryWS  }                                  =  require ( '../networks/active.js' );
 const { abiEventMapper }                                        =  require ( './mappingBuilder' );
 const { Logger }                                                =  require ( './logger' );
-
+const { 
+  GetBaoBabNetwork, 
+  GetBaoBabWebSocket 
+}                                                               =  require ( '../networks/klayBaobab.js' );
+const Caver                                                     =  require ( 'caver-js' );
 /*
   SwapPoolFactory
   TokenManager
@@ -29,22 +33,13 @@ async function subscribe( fromblockNumber, toblockNumber, contract ) {
   };
 
   try{
-    var subscription = QueryWS().subscribe('logs', filters, function(error, result) {
-      console.log("in.....");
-        if (error) {
-          subscription.unsubscribe( (error, success) => {
-              if(error) {
-                console.log('Failed to disconnect from Thundercore mainnet!');
-              }
-              if(success) {
-                console.log('disconnected');
-              }
-            });
-        } else {
-          Logger( result, abiEventMapper );
-        }
-      })
+    const caver = new Caver( GetBaoBabNetwork() );
+    const result = await caver.rpc.klay.getLogs(filters);
+    console.log(result.length);
 
+    result.forEach( function ( item ) {
+      Logger(item, abiEventMapper);
+    });
   } catch(e) {
     console.log( e );
   }
