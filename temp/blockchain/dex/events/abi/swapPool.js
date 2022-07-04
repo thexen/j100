@@ -16,6 +16,10 @@ function _getAbiFounding() {
             name: 'method',
             indexed: true
         },{
+            type: 'address',
+            name: 'object',
+            indexed: true            
+        },{
             type: 'uint256',
             name: 'firstAmount',
         },{
@@ -47,6 +51,10 @@ function _getAbiDeposit() {
             type: 'function',
             name: 'method',
             indexed: true
+        },{
+            type: 'address',
+            name: 'object',
+            indexed: true            
         },{
             type: 'uint256',
             name: 'firstAmount',
@@ -86,6 +94,10 @@ function _getAbiWithdrawal() {
             name: 'method',
             indexed: true
         },{
+            type: 'address',
+            name: 'object',
+            indexed: true            
+        },{
             type: 'uint256',
             name: 'lptAmount',
         },{
@@ -120,6 +132,10 @@ function _getAbiStatistics() {
             type: 'function',
             name: 'method',
             indexed: true
+        },{
+            type: 'address',
+            name: 'object',
+            indexed: true            
         },{
             type: 'uint256',
             name: 'firstBalance',

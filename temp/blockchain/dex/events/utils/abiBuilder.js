@@ -4,12 +4,9 @@
 
 
 */
-// const { GetWeb3 }                                               = require ( '../../networks/active.js' );
+
 const Web3                                                      = require('web3');
-const { 
-  GetBaoBabNetwork, 
-  GetBaoBabWebSocket 
-}                                                               = require ( '../../networks/klayBaobab.js' );
+const { GetRPC }                                                = require ( '../../networks/provider.js' );
 const { abiEventCompile }                                       = require ( './abiCompiler.js' );
 
 /*
@@ -22,11 +19,17 @@ const { abiEventCompile }                                       = require ( './a
   GToken
 */
 
-function _building( router ) {
-  const web3 = new Web3( new Web3.providers.HttpProvider( GetBaoBabNetwork() ) );
+function _building( _web3, _router ) {
+  let   web3  = undefined;
+  let   objs  = {};
 
-  let objs={};
-  router.forEach( function( item ) {
+  if( _web3 == undefined )
+    new Web3( new Web3.providers.HttpProvider( GetRPC() ) );
+  else 
+    web3 = _web3;
+      
+  try{
+  _router.forEach( function( item ) {
     let dynimic = require ( item.file );
     var abi     = dynimic[item.abi ]();
     var key     = web3.utils.keccak256( abiEventCompile(abi) );
@@ -37,6 +40,12 @@ function _building( router ) {
     objs[key] = data ;
   })
   return objs;
+  } catch( e ) {
+
+  } finally {
+    objs = undefined;
+    web3 = undefined;
+  }
 
 }
 
