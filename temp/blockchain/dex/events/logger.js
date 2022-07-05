@@ -47,10 +47,10 @@ async function _logger( log, abiEventMapper ) {
 
     //TODO item.address << contract address 이므로 유효한 contract 인지 확인 할 것
     var topicMethod       =  web3.eth.abi.decodeLog( optsTopics, undefined, log.topics );
-    var decodedLog        =  web3.eth.abi.decodeLog( abiEventMapper[topicMethod.method].inputs, log.data, log.topics );
-    console.log( topicMethod.method );
-    console.log(log.topics)
-    abiEventMapper[topicMethod.method].callBack( log, decodedLog );
+    if( abiEventMapper[topicMethod.method] != undefined ) {
+      var decodedLog        =  web3.eth.abi.decodeLog( abiEventMapper[topicMethod.method].inputs, log.data, log.topics );
+      abiEventMapper[topicMethod.method].callBack( log, decodedLog );
+    }
   } catch( e ) {
     console.log( e );
   }

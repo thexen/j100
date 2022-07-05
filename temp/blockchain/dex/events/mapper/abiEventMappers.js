@@ -22,11 +22,11 @@ module.exports = {
 
     { file: '../abi/swapHelper.js',           abi: 'getAbiExchange',            event: 'eventExchange' }, 
 
-    { file: '../abi/gToken.js',               abi: 'GetAbiStaking',             event: 'eventStaking' }, 
-    { file: '../abi/gToken.js',               abi: 'getAbiUnstaking',           event: 'eventUnstaking' }, 
+    //{ file: '../abi/gToken.js',               abi: 'GetAbiStaking',             event: 'eventStaking' }, 
+    //{ file: '../abi/gToken.js',               abi: 'getAbiUnstaking',           event: 'eventUnstaking' }, 
     { file: '../abi/gToken.js',               abi: 'getAbiTransferRewardTo',    event: 'eventTransferRewardTo' }, 
-    { file: '../abi/gToken.js',               abi: 'getAbiBurn',                event: 'eventBurn' }, 
-    { file: '../abi/gToken.js',               abi: 'getAbiRecycle',             event: 'eventRecycle' }, 
+    //{ file: '../abi/gToken.js',               abi: 'getAbiBurn',                event: 'eventBurn' }, 
+    //{ file: '../abi/gToken.js',               abi: 'getAbiRecycle',             event: 'eventRecycle' }, 
 
     { file: '../abi/teamVault.js',            abi: 'getAbiAddMember',           event: 'eventAddMember' }, 
     { file: '../abi/teamVault.js',            abi: 'getAbiRemoveMember',        event: 'eventRemoveMember' }, 

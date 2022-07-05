@@ -76,13 +76,15 @@ function _getAbiTransferRewardTo() {
                 type: 'address',
                 name: 'to',
             }
-      ]
+        ]
     }
     return abi;
 }
 
 function _transferRewardTo( eventLog, decodedEventLog ) {
-
+    console.log("Called _transferRewardTo ................")
+    console.log(decodedEventLog)
+    console.log(decodedEventLog.objectId)
 }
 
 function _getAbiBurn() {
