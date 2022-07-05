@@ -24,7 +24,7 @@ function _building( _web3, _router ) {
   let   objs  = {};
 
   if( _web3 == undefined )
-    new Web3( new Web3.providers.HttpProvider( GetRPC() ) );
+    web3 = new Web3( new Web3.providers.HttpProvider( GetRPC() ) );
   else 
     web3 = _web3;
       

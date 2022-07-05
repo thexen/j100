@@ -4,21 +4,19 @@
 
 
 */
-//const { abiEventMapper }                                        = require ( './mappingBuilder' );
+const cron                                                      = require ( 'node-cron' );
+const { rpcRequest }                                            = require( '../utils/rpcRequest/rpcRequest.js' );
+const { encodeParams }                                          = require( '../utils/encoder/encoder.js' );
 const { Logger }                                                = require ( './logger' );
 const { 
   GetRPC, 
   GetWebSocket 
 }                                                               = require ( '../networks/provider.js' );
 
-const Caver                                                     = require ( 'caver-js' );
-const cron                                                      = require ( 'node-cron' );
-
-const caver           = new Caver( GetRPC() );
-
 const {abiEventBuild}                                           = require ( './utils/abiBuilder.js' );
 const abiEventMappers                                           = require ( './mapper/abiEventMappers.js' );
-const abiEventMapper  = abiEventBuild( caver, abiEventMappers.abiEventMapper_info );
+const abiEventMapper  = abiEventBuild( undefined, abiEventMappers.abiEventMapper_info );
+
 
 /*
   SwapPoolFactory
@@ -30,47 +28,23 @@ const abiEventMapper  = abiEventBuild( caver, abiEventMappers.abiEventMapper_inf
   GToken
 */
 
-async function subscribe( fromblockNumber, toblockNumber, contract ) {
+async function subscribe( id, fromblockNumber, toblockNumber, contract, topics ) {
 
   //-------------------------------------------------------------
   var filters = {
       fromBlock:  fromblockNumber,
       toBlock:    toblockNumber,
-      address:    contract
+      address:    contract,
+      topics:     topics,
   };
 
   try{
     // get logs
-/*
-// Request
-
-POST https://kaikas.baobab.klaytn.net:8651
-
-{
-  "jsonrpc":"2.0",
-  "method":"klay_getLogs",
-  "params":[
-    {
-      "fromBlock":95153514,
-      "toBlock": 95153614,
-      "address": "0xC2FDEa5647C0bf3F19a049Fb95f4A58BfdFf044D"
-    }
-  ],
-  "id": 1
-}
-
-response 
-{
-"jsonrpc": "2.0",
-"id": 1,
-result: []
-  }
-*/    
-    const result = await caver.rpc.klay.getLogs(filters);
-    // call logger
-    result.forEach( function ( item ) {
+    var res = await rpcRequest( GetRPC(), 'klay_getLogs', filters, id );
+    res.result.forEach( function ( item ) {
       Logger(item, abiEventMapper);
     });
+    
 
   } catch(e) {
     console.log( e );
@@ -79,18 +53,36 @@ result: []
 
 
 /*
-subscribe( 95153503, 95153504, [ '0xC2FDEa5647C0bf3F19a049Fb95f4A58BfdFf044D'
+subscribe( 1, 95153503, 95153504, [ '0xC2FDEa5647C0bf3F19a049Fb95f4A58BfdFf044D'
                             , '0x632CFFf2560603D46EeD6D1cbEFF3fc2Fa8aACc8'
                             , '0x8E3E9359c6411928D2Ce4cE9e3A5C535632f7458'
                             , '0x0c59304143A49a93cf41e122eBaACC3be413Eb1a' ] );
 */
 
-subscribe( 95153514, 95153614, [ '0xC2FDEa5647C0bf3F19a049Fb95f4A58BfdFf044D'
-                            /*, '0x632CFFf2560603D46EeD6D1cbEFF3fc2Fa8aACc8'
-                            , '0x8E3E9359c6411928D2Ce4cE9e3A5C535632f7458'
-, '0x0c59304143A49a93cf41e122eBaACC3be413Eb1a'*/ ] );
+/*
+subscribe( 1, 95426241, 95426241//95335966, 95335966
+                          , [ 
+                                '0x896aCc84F8215b43a4AEA1FA2BecFd2cea589DA1'    //Objects
+                              , '0x6a8Ba3365271508171F38de33bD4087eBE55ce9E'    //TokenManager
+                              , '0x3832a5C445c6fb5793D5287D720cc5AF88C63cD9'    //SwapPoolFactory                            
+                              , '0x38799a6c39B77cA13562B77A222F488f05EE924d'    //SwapHelper
+                              , '0x745699B50cE70AfC2DD80aC3525271F6fAdFAeff'    //DAO
+                              , '0xaC062cC76FE249B0E0B6a942486FB0FC919c30D7'    //TeamVault
+                              , '0x69b81B5F03E6Db66e4D8a4Fc9126542660157D12'    //GToken
+                            ]
+                          , undefined);
+*/
 
-//subscribe( 95153614, 95154614, [ '0xC2FDEa5647C0bf3F19a049Fb95f4A58BfdFf044D'
+const addressObjects = encodeParams( ['address'], ['0x896acc84f8215b43a4aea1fa2becfd2cea589da1']);
+subscribe( 1, 95427037, 95427037//95335966, 95335966
+                          , undefined
+                          , [ 
+                              [],
+                              addressObjects
+                          ] );
+
+
+//subscribe( 1, 95153614, 95154614, [ '0xC2FDEa5647C0bf3F19a049Fb95f4A58BfdFf044D'
 //                            , '0x632CFFf2560603D46EeD6D1cbEFF3fc2Fa8aACc8'
 //                            , '0x8E3E9359c6411928D2Ce4cE9e3A5C535632f7458'
 //                            , '0x0c59304143A49a93cf41e122eBaACC3be413Eb1a'
@@ -114,7 +106,7 @@ subscribe( 95153514, 95153614, [ '0xC2FDEa5647C0bf3F19a049Fb95f4A58BfdFf044D'
 //  const fromBlock = Number(blockNumber) - 10;
 //  const toBlock = blockNumber;
 //  console.log(fromBlock);
-//  subscribe( fromBlock, toBlock, ['0xC2FDEa5647C0bf3F19a049Fb95f4A58BfdFf044D',
+//  subscribe( 1, fromBlock, toBlock, ['0xC2FDEa5647C0bf3F19a049Fb95f4A58BfdFf044D',
 //                                  '0x632CFFf2560603D46EeD6D1cbEFF3fc2Fa8aACc8',
 //                                  '0x8E3E9359c6411928D2Ce4cE9e3A5C535632f7458',
 //                                  '0x0c59304143A49a93cf41e122eBaACC3be413Eb1a',
