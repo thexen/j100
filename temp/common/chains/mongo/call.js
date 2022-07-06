@@ -107,6 +107,8 @@ async function _insertToMongo( client, _collection, _id, _doc ) {
     let databse         = client.db();
     let collection      = databse.collection(_collection);
     try{
+        if( _id == undefined )
+            return await collection.insertMany( [{ _timestamp: new Date(Date.now()), _source: ( typeof _doc == 'string' )? JSON.parse( _doc ) : _doc }]);    
         return await collection.insertMany( [{_id: _id, _timestamp: new Date(Date.now()), _source: ( typeof _doc == 'string' )? JSON.parse( _doc ) : _doc }]);
     } finally {
         databse         = undefined;

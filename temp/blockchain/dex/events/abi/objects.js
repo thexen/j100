@@ -4,7 +4,7 @@
 
 
 */
-const { UpsertToMongo }                       =  require ( '../../../../common/chains/mongo/call.js' );
+const { UpsertToMongo, InsertToMongo, FindToModify }                       =  require ( '../../../../common/chains/mongo/call.js' );
 
 function _getAbiRegistObject() {
 
@@ -63,9 +63,7 @@ async function _registObject( eventLog, decodedEventLog, mongoClient ) {
             tx:     eventLog.transactionHash,
         }
     }
-
     await UpsertToMongo( mongoClient, 'objects', decodedEventLog.objectId, objectInfo );
-
 }
 
 function _getAbiRegistPermission() {
@@ -94,9 +92,35 @@ function _getAbiRegistPermission() {
     return abi;
 }
 
-function _registPermission( eventLog, decodedEventLog, mongoClient ) {
+var permissionType = {
+    0  : 'DENY',
+    1  : 'DEFAULT',
+    2  : 'FACTORY',
+
+    3  : 'SPFACTORY',
+    4  : 'DAO',
+    5  : 'RARITY',
+
+    6  : 'OWNER',
+    7  : 'CREATOR'
+}
+
+async function _registPermission( eventLog, decodedEventLog, mongoClient ) {
     console.log("ENTRY _registPermission()");
-    //console.log(decodedEventLog)
+
+    let permissionInfo  = {
+        source:     decodedEventLog.source,
+        accessor:   decodedEventLog.accessor,
+        permission: permissionType[ decodedEventLog.permission ],
+        block:      {
+            number: eventLog.blockNumber,
+            tx:     eventLog.transactionHash,
+        }
+    }
+    var res = await FindToModify( mongoClient, 'counters',{_id: 'permissions'}, { seq: 1 }, { '$inc': {seq: 1} } )
+    if( res.lastErrorObject.updatedExisting ) {
+        await InsertToMongo( mongoClient, 'permissions', res.value.seq, permissionInfo );    
+    } 
 }
 
 module.exports.getAbiRegistObject             = _getAbiRegistObject;
