@@ -4,48 +4,96 @@
 
 
 */
+const { UpsertToMongo }                       =  require ( '../../../../common/chains/mongo/call.js' );
 
 function _getAbiCreateSwapPool() {
 
-    var abi = {
-        type: 'event',
-        name: 'CreateSwapPool',
-        inputs: [
-          {
-                type: 'function',
-                name: 'method',
-                indexed: true
-          },{
-                type: 'uint256',
-                name: 'index',
-          },{
-                type: 'address',
-                name: 'firstToken',
-          },{
-                type: 'address',
-                name: 'secondToken',
-          },{
-                type: 'address',
-                name: 'sp',
-          },{
-                type: 'address',
-                name: 'holder',
-          },{
-                type: 'address',
-                name: 'lpt',
-          },{
-                type: 'uint256',
-                name: 'fee',
-          }
-        ]
-    }
+      var abi = {
+            type: 'event',
+            name: 'CreateSwapPool',
+            inputs: [
+            {
+                  type: 'function',
+                  name: 'method',
+                  indexed: true
+            },{
+                  type: 'uint256',
+                  name: 'index',
+            },{
+                  type: 'address',
+                  name: 'firstToken',
+            },{
+                  type: 'address',
+                  name: 'secondToken',
+            },{
+                  type: 'address',
+                  name: 'sp',
+            },{
+                  type: 'address',
+                  name: 'holder',
+            },{
+                  type: 'address',
+                  name: 'lpt',
+            },{
+                  type: 'uint256',
+                  name: 'fee',
+            }
+            ]
+      }
       
     return abi;
 }
 
-function _createSwapPool( eventLog, decodedEventLog ) {
-    console.log("Called _createSwapPool ................")
-    console.log(decodedEventLog)
+async function _createSwapPool( eventLog, decodedEventLog, mongoClient ) {
+      console.log("ENTRY _createSwapPool()");
+      //console.log( decodedEventLog )
+
+      var assets = {
+            first: 0,
+            second: 0,
+            totalSupply: 0, //LPT 발행수    
+      };
+      let swapPoolInfo  = {
+            tokens: {
+                  first:          decodedEventLog.firstToken,
+                  second:         decodedEventLog.secondToken,
+            },
+            contracts: { 
+                  sp:             decodedEventLog.sp,
+                  holder:         decodedEventLog.holder,
+                  lpt:            decodedEventLog.lpt,
+            },
+            fee:        decodedEventLog.fee,
+            assets:     assets,
+            stat: {
+                  thirtyDays: { //30일간 누적 통계
+                        tradingVolume: {
+                              first:  0,
+                              second: 0,
+                        },
+                        income: {
+                              first:  0,
+                              second: 0,
+                        }
+                  }
+            },
+            block: {
+                  number: eventLog.blockNumber,
+                  tx:     eventLog.transactionHash,
+            }     
+      }
+
+      var pair = {
+            sp:             decodedEventLog.sp,
+            first:          decodedEventLog.firstToken,
+            second:         decodedEventLog.secondToken,
+            fee:            decodedEventLog.fee,        
+            assets:         assets,
+      };
+
+      await UpsertToMongo( mongoClient, 'swappools',  decodedEventLog.index,     swapPoolInfo );
+      await UpsertToMongo( mongoClient, 'pairs',      decodedEventLog.index,     pair );
+
 }
 
 module.exports.getAbiCreateSwapPool                    = _getAbiCreateSwapPool;

@@ -4,6 +4,7 @@
 
 
 */
+const { UpsertToMongo }                       =  require ( '../../../../common/chains/mongo/call.js' );
 
 function _getAbiEnhance() {
 
@@ -34,7 +35,7 @@ function _getAbiEnhance() {
   return abi;
 } 
 
-function _enhance( eventLog, decodedEventLog ) {
+function _enhance( eventLog, decodedEventLog, mongoClient ) {
     console.log("Called _enhance ................")
     console.log(decodedEventLog)
 }

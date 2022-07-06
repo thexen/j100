@@ -8,8 +8,8 @@ const Web3                            = require('web3');
 const Caver                           = require("caver-js");
 
 const { 
-        GetBaoBabRPC, 
-        GetBaoBabWebSocket 
+      GetRPC, 
+      GetWebSocket 
       }                               = require ( './provider.js' );
 
 const web3                            = new Web3( new Web3.providers.HttpProvider( _getRPC() ) );
@@ -17,11 +17,11 @@ const web3ws                          = new Web3( _getWebSocket() );
 const caver                           = new Caver( _getRPC() );
 
 function _getRPC() {
-  return GetBaoBabRPC();
+  return GetRPC();
 }
 
 function _getWebSocket() {
-  return GetBaoBabWebSocket();
+  return GetWebSocket();
 }
 
 function _getWeb3() {

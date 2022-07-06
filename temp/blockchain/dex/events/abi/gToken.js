@@ -4,6 +4,7 @@
 
 
 */
+const { UpsertToMongo }                       =  require ( '../../../../common/chains/mongo/call.js' );
 
 function _getAbiStaking() {
     var abi = {
@@ -31,7 +32,7 @@ function _getAbiStaking() {
     }
     return abi;
 } 
-function _staking( eventLog, decodedEventLog ) {
+function _staking( eventLog, decodedEventLog, mongoClient ) {
 
 }
 
@@ -59,7 +60,7 @@ function _getAbiUnstaking() {
     return abi;
 }
 
-function _unstaking( eventLog, decodedEventLog ) {
+function _unstaking( eventLog, decodedEventLog, mongoClient ) {
 
 }
 
@@ -81,7 +82,7 @@ function _getAbiTransferRewardTo() {
     return abi;
 }
 
-function _transferRewardTo( eventLog, decodedEventLog ) {
+function _transferRewardTo( eventLog, decodedEventLog, mongoClient ) {
     console.log("Called _transferRewardTo ................")
     console.log(decodedEventLog)
     console.log(decodedEventLog.objectId)
@@ -105,7 +106,7 @@ function _getAbiBurn() {
     return abi;
 }
 
-function _burn( eventLog, decodedEventLog ) {
+function _burn( eventLog, decodedEventLog, mongoClient ) {
 
 }
 
@@ -127,7 +128,7 @@ function _getAbiRecycle() {
     return abi;
 }
 
-function _recycle( eventLog, decodedEventLog ) {
+function _recycle( eventLog, decodedEventLog, mongoClient ) {
 
 }
 

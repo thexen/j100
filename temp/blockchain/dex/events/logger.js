@@ -33,7 +33,7 @@ async function _txLogger( tx, abiEventMapper ) {
 
 }
 
-async function _logger( log, abiEventMapper ) {
+async function _logger( log, abiEventMapper, mongoClient ) {
 
   var optsTopics = [      
     {
@@ -49,7 +49,7 @@ async function _logger( log, abiEventMapper ) {
     var topicMethod       =  web3.eth.abi.decodeLog( optsTopics, undefined, log.topics );
     if( abiEventMapper[topicMethod.method] != undefined ) {
       var decodedLog        =  web3.eth.abi.decodeLog( abiEventMapper[topicMethod.method].inputs, log.data, log.topics );
-      abiEventMapper[topicMethod.method].callBack( log, decodedLog );
+      await abiEventMapper[topicMethod.method].callBack( log, decodedLog, mongoClient );
     }
   } catch( e ) {
     console.log( e );

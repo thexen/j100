@@ -4,6 +4,7 @@
 
 
 */
+const { UpsertToMongo }                       =  require ( '../../../../common/chains/mongo/call.js' );
 
 function _getAbiFounding() {
 
@@ -34,7 +35,7 @@ function _getAbiFounding() {
   return abi;
 } 
 
-function _founding( eventLog, decodedEventLog ) {
+function _founding( eventLog, decodedEventLog, mongoClient ) {
 
     console.log("Called _founding ................")
     console.log(decodedEventLog)
@@ -76,7 +77,7 @@ function _getAbiDeposit() {
   return abi;
 } 
 
-function _deposit( eventLog, decodedEventLog ) {
+function _deposit( eventLog, decodedEventLog, mongoClient ) {
 
     console.log("Called _deposit ................")
     console.log(decodedEventLog)
@@ -115,7 +116,7 @@ function _getAbiWithdrawal() {
   return abi;
 } 
 
-function _withdrawal( eventLog, decodedEventLog ) {
+function _withdrawal( eventLog, decodedEventLog, mongoClient ) {
 
     console.log("Called _withdrawal ................")
     console.log(decodedEventLog)
@@ -160,7 +161,7 @@ function _getAbiStatistics() {
   return abi;
 } 
 
-function _statistics( eventLog, decodedEventLog ) {
+function _statistics( eventLog, decodedEventLog, mongoClient ) {
 
     console.log("Called _statistics ................")
     console.log(decodedEventLog)

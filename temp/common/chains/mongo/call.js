@@ -6,36 +6,38 @@
 //MongoDB Server 4.4.6
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-const { MongoClient, ReadPreference } = require('mongodb');
-const {MONGODBCONF} = require('../../../config/chain');
+const { MongoClient, ReadPreference }   = require('mongodb');
+const {MONGODBCONF}                     = require('../../../config/chain');
 
 /*
 admin 계정 정보
 db.auth("admin", "abcd0110");
 */
 //const mongoHost = 'mongodb://192.168.10.111:27017,192.168.10.113:27017,192.168.10.112:27018/dex_db';
-//const mongoHost = 'mongodb://192.168.10.111:27017/dex_db';
-const mongoHost = 'mongodb://192.168.1.33:27017/dex_db';
+const mongoHost = 'mongodb://192.168.10.111:27017/dex_db';
+//const mongoHost = 'mongodb://192.168.1.33:27017/dex_db';
 //const mongoHost = 'mongodb://10.10.0.121:27017/test_db';
 const mongoUser = "dexUser";
 const mongoPwd  = "dexUser";
 const mongoConnTimeout  = 5000;
-const mongoConnPool     = 5;
+const mongoConnPool     = 100;
 const mongoReplicaSet   = 'rs0'
 
+/*
 const client = new MongoClient(mongoHost, {
     authSource: 'admin',
     auth: {
-        user: mongoUser, 
-        password: mongoPwd
+        user:                   mongoUser, 
+        password:               mongoPwd
     },
-    replicaSet: mongoReplicaSet,
-    readPreference: ReadPreference.PRIMARY_PREFERRED,
-    poolSize: mongoConnPool,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: mongoConnTimeout
+    replicaSet:                 mongoReplicaSet,
+    readPreference:             ReadPreference.PRIMARY_PREFERRED,
+    poolSize:                   mongoConnPool,
+    useNewUrlParser:            true,
+    useUnifiedTopology:         true,
+    serverSelectionTimeoutMS:   mongoConnTimeout
 });
+*/
 
 /*
 const client = new MongoClient( MONGODBCONF.datasource, {
@@ -53,6 +55,24 @@ const client = new MongoClient( MONGODBCONF.datasource, {
 });
 */
 
+async function _newClient() {
+    const client = new MongoClient(mongoHost, {
+        authSource: 'admin',
+        auth: {
+            user:                   mongoUser, 
+            password:               mongoPwd
+        },
+        replicaSet:                 mongoReplicaSet,
+        readPreference:             ReadPreference.PRIMARY_PREFERRED,
+        poolSize:                   mongoConnPool,
+        useNewUrlParser:            true,
+        useUnifiedTopology:         true,
+        serverSelectionTimeoutMS:   mongoConnTimeout
+    });
+    await client.connect();
+    return client;    
+}
+
 async function _connect() {
     if( !client.isConnected() ){
         console.log("not connected to MongoDB!!!")
@@ -61,71 +81,76 @@ async function _connect() {
     }
 }
 
-async function _getFromMongo( _collection, _id ) {
-    await _connect();
-    const databse = client.db();
-    const collection = databse.collection(_collection);
+async function _getFromMongo( client, _collection, _id ) {
+    let databse         = client.db();
+    let collection      = databse.collection(_collection);
     try{
         return await collection.findOne( {_id: _id} );
     } finally {
+        databse         = undefined;
+        collection      = undefined;
     }
 }
 
-async function _upsertToMongo( _collection, _id, _doc ) {
-    await _connect();
-    const databse = client.db();
-    const collection = databse.collection(_collection);
+async function _upsertToMongo( client, _collection, _id, _doc ) {
+    let databse         = client.db();
+    let collection      = databse.collection(_collection);
     try{
         return await collection.updateOne( {_id: _id}, {$set: {_timestamp: new Date(Date.now()), _source: ( typeof _doc == 'string' )? JSON.parse( _doc ) : _doc }}, {upsert: true});
     } finally {
+        databse         = undefined;
+        collection      = undefined;
     }
 }
 
-async function _insertToMongo( _collection, _id, _doc ) {
-    await _connect();
-    const databse = client.db();
-    const collection = databse.collection(_collection);
+async function _insertToMongo( client, _collection, _id, _doc ) {
+    let databse         = client.db();
+    let collection      = databse.collection(_collection);
     try{
         return await collection.insertMany( [{_id: _id, _timestamp: new Date(Date.now()), _source: ( typeof _doc == 'string' )? JSON.parse( _doc ) : _doc }]);
     } finally {
+        databse         = undefined;
+        collection      = undefined;
     }
 }
 
-async function _updateToMogo( _collection, _query, _doc ) {
-    await _connect();
-    const databse = client.db();
-    const collection = databse.collection(_collection);
+async function _updateToMogo( client, _collection, _query, _doc ) {
+    let databse         = client.db();
+    let collection      = databse.collection(_collection);
     try{
         return await collection.updateOne( ( typeof _query == 'string' )? JSON.parse( _query ) : _query, 
                                        {$set: ( typeof _doc == 'string' )? JSON.parse( _doc ) : _doc });
     } finally {
+        databse         = undefined;
+        collection      = undefined;
     }
 }
 
-async function _findToModify( _collection, _query, _order, _update ) {
-    await _connect();
-    const databse = client.db();
-    const collection = databse.collection(_collection);
+async function _findToModify( client, _collection, _query, _order, _update ) {
+    let databse         = client.db();
+    let collection      = databse.collection(_collection);
     try{
         return await collection.findAndModify( _query, _order, _update );
     } finally {
+        databse         = undefined;
+        collection      = undefined;
     }
 }
 
-async function _deleteFromMongo( _collection, _id ) {
-    await _connect();
-    const databse = client.db();
-    const collection = databse.collection(_collection);
+async function _deleteFromMongo( client, _collection, _id ) {
+    let databse         = client.db();
+    let collection      = databse.collection(_collection);
     try{
         return await collection.deleteOne( {_id: _id} );
     } finally {
+        databse         = undefined;
+        collection      = undefined;
     }
 }
 
-async function _queryFromFromMongo( _collection, _dslQuery ) {
-    await _connect();
-    const databse       = client.db();
-    const collection    = databse.collection(_collection);
+async function _queryFromFromMongo( client, _collection, _dslQuery ) {
+    let databse         = client.db();
+    let collection      = databse.collection(_collection);
     let value           = undefined;
     let sliceTemp       = [];
     try{
@@ -175,16 +200,19 @@ async function _queryFromFromMongo( _collection, _dslQuery ) {
 		    throw Error( 'DSLQuery Method is not define' );		
         }
     } finally {
-        sliceTemp   = undefined;
-        value       = undefined;
+        sliceTemp       = undefined;
+        value           = undefined;
+        databse         = undefined;
+        collection      = undefined;
     }
 }
 
-module.exports.InsertToMongo = _insertToMongo;
-module.exports.UpsertToMongo = _upsertToMongo;
-module.exports.GetFromMongo = _getFromMongo;
-module.exports.DeleteFromMongo = _deleteFromMongo;
-module.exports.QueryFromMongo = _queryFromFromMongo;
-module.exports.UpdateFromMongo = _updateToMogo;
+module.exports.NewMongoClient           = _newClient;
+module.exports.InsertToMongo            = _insertToMongo;
+module.exports.UpsertToMongo            = _upsertToMongo;
+module.exports.GetFromMongo             = _getFromMongo;
+module.exports.DeleteFromMongo          = _deleteFromMongo;
+module.exports.QueryFromMongo           = _queryFromFromMongo;
+module.exports.UpdateFromMongo          = _updateToMogo;
 
-module.exports.FindToModify = _findToModify
+module.exports.FindToModify             = _findToModify

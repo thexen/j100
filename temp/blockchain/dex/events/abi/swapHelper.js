@@ -4,6 +4,7 @@
 
 
 */
+const { UpsertToMongo }                       =  require ( '../../../../common/chains/mongo/call.js' );
 
 function _getAbiExchange() {
 
@@ -39,7 +40,7 @@ function _getAbiExchange() {
   return abi;
 } 
 
-function _exchange( eventLog, decodedEventLog ) {
+function _exchange( eventLog, decodedEventLog, mongoClient ) {
 
 }
 

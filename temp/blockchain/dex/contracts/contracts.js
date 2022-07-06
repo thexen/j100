@@ -4,10 +4,10 @@
 
 
 */
-const swapHelper        = "0xc0D9a54cF6b54361Ac045cD849E8Da784a68E5f8";
-const swapPoolManager   = "0xbAa0951c51f93350771c0DD48c5D49ae5BEe8cA2";
-const swapPoolFactory   = "0x125e64F6594Ff13479B0d9525B9dd2FF6098552c";
-const tokenManager      = "0x42e8F7474996dA449639cb5c4125732c0a992E7a";
+const swapHelper        = "0x38799a6c39B77cA13562B77A222F488f05EE924d";
+const swapPoolManager   = "0x37c7B97F40Fc190e29645237842daa3d1C9EeF8d";
+const swapPoolFactory   = "0x3832a5C445c6fb5793D5287D720cc5AF88C63cD9";
+const tokenManager      = "0x6a8Ba3365271508171F38de33bD4087eBE55ce9E";
 
 
 function _getContract( object ) {

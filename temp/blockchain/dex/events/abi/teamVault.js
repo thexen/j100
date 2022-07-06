@@ -4,6 +4,7 @@
 
 
 */
+const { UpsertToMongo }                       =  require ( '../../../../common/chains/mongo/call.js' );
 
 function _getAbiAddMember() {
   var abi = {
@@ -23,7 +24,7 @@ function _getAbiAddMember() {
     return abi;
 } 
 
-function _addMember( eventLog, decodedEventLog ) {
+function _addMember( eventLog, decodedEventLog, mongoClient ) {
     console.log("Called _addMember ................")
     console.log(decodedEventLog)
 }
@@ -46,7 +47,7 @@ function _getAbiRemoveMember() {
     return abi;
 }
 
-function _removeMember( eventLog, decodedEventLog ) {
+function _removeMember( eventLog, decodedEventLog, mongoClient ) {
     console.log("Called _removeMember ................")
     console.log(decodedEventLog)
 }
@@ -75,7 +76,7 @@ function _getAbiProposal() {
     return abi;
 }
 
-function _Proposal( eventLog, decodedEventLog ) {
+function _Proposal( eventLog, decodedEventLog, mongoClient ) {
     console.log("Called _Proposal ................")
     console.log(decodedEventLog)
 }
@@ -101,7 +102,7 @@ function _getAbiApproval() {
     return abi;
 }
 
-function _approval( eventLog, decodedEventLog ) {
+function _approval( eventLog, decodedEventLog, mongoClient ) {
     console.log("Called _approval ................")
     console.log(decodedEventLog)
 }
@@ -127,7 +128,7 @@ function _getAbiInvoke() {
     return abi;
 }
 
-function _invoke( eventLog, decodedEventLog ) {
+function _invoke( eventLog, decodedEventLog, mongoClient ) {
     console.log("Called _invoke ................")
     console.log(decodedEventLog)
 }

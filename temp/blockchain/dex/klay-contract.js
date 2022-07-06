@@ -34,8 +34,9 @@ const { InqueryLSHStakingRewardConst }                          =  require ( './
 const { CalcMiningAmount }                                      =  require ( './utils/mining/calcMiningAmount.js' );
 const { BalanceOf, Symbol, Allowance }                          =  require ( './inquery/erc20.js' );
 const { UpsertToMongo, QueryFromMongo }                         =  require ( '../../common/chains/mongo/call.js' );
-const {invokeSwapPool }                                         =  require ( './nosql/invoke/swapPool.js' );
-const {invokeToken }                                            =  require ( './nosql/invoke/token.js' );
+
+const { NewMongoClient  }                                       =  require ( '../../common/chains/mongo/call.js' );
+
 
 
 
@@ -189,6 +190,7 @@ async function main05() {
 //create swap pool
 async function main06() {
 
+  let mongoClient = await NewMongoClient();
   //var poolSize     = await InquerySPMPoolSize();
   //console.log( poolSize['0'] );
 
@@ -202,6 +204,7 @@ async function main06() {
   console.log( poolSize['0'] );
 
   var obj         = await InquerySPMSPagingSwapPool( poolSize['0'], 1 );
+  console.log(obj  )
   var poolInfo    = await InquerySPPoolnfo( obj[2][0] );
   var query1      = {
     findone: { 
@@ -213,31 +216,14 @@ async function main06() {
       "_source.contract": poolInfo[3]
     }
   }    
-  var res1      = await QueryFromMongo( "tokens", query1 );
-  var res2      = await QueryFromMongo( "tokens", query2 );
-  let swapPool  = {
-    tokens: {
-        first: {
-          contract: res1.contract,
-          symbol:   res1.symbol,
-          icon:     res1.icon,
-        },
-        second: {
-          contract: res2.conract,
-          symbol:   res2.symbol,
-          icon:     res2.icon,
-        }
-    },
-    contracts: { 
-        sp:     obj[2][0 + (i*3)],    //swappool
-        holder: obj[2][1 + (i*3)],    //holder
-        lpt:    obj[2][2 + (i*3)],    //lpt
-    }
-  }
-
+  console.log( query1 );
+  var res1      = await QueryFromMongo( mongoClient, "tokens", query1 );
+  console.log( res1 );
+  var res2      = await QueryFromMongo( mongoClient, "tokens", query2 );
+  console.log( res2 );
 
 }
-//main06();
+main06();
 
 //sync swap pool to mongoDB
 async function main07() {
@@ -287,7 +273,7 @@ async function main07() {
   }
  
 }
-main07()
+//main07()
 
 //regist token
 async function main08() {
@@ -455,7 +441,7 @@ async function main11() {
   //0x5472f367b98733699ec66aaae745733f25aded002c2606c49558c84371601423
 
   QueryChain().getTransactionReceipt( '0x18cd4316f325321f6e42f2274d3a5cb0bad429b226c67b222a2659c520d8d261', function(err,tx) {
-    txLogger( tx, abiEventMapper );
+    //txLogger( tx, abiEventMapper );
   });
 
   //0xA59F83Fa82CeF4086D762259D589deAA3584fFFd

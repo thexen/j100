@@ -4,6 +4,7 @@
 
 
 */
+const { UpsertToMongo }                       =  require ( '../../../../common/chains/mongo/call.js' );
 
 function _getAbiRegistObject() {
 
@@ -51,10 +52,20 @@ var objectClass = {
     15 : 'SWAPHELPER'    
 }
 
-function _registObject( eventLog, decodedEventLog ) {
-    console.log("Called _registObject ................")
-    console.log(decodedEventLog)
-    console.log( objectClass[decodedEventLog.objectId] )
+async function _registObject( eventLog, decodedEventLog, mongoClient ) {
+    console.log("ENTRY _registObject()");
+
+    let objectInfo  = {
+        contract:   decodedEventLog.object,
+        class:      objectClass[decodedEventLog.objectId],
+        block:      {
+            number: eventLog.blockNumber,
+            tx:     eventLog.transactionHash,
+        }
+    }
+
+    await UpsertToMongo( mongoClient, 'objects', decodedEventLog.objectId, objectInfo );
+
 }
 
 function _getAbiRegistPermission() {
@@ -83,9 +94,9 @@ function _getAbiRegistPermission() {
     return abi;
 }
 
-function _registPermission( eventLog, decodedEventLog ) {
-    console.log("Called _registPermission ................")
-    console.log(decodedEventLog)
+function _registPermission( eventLog, decodedEventLog, mongoClient ) {
+    console.log("ENTRY _registPermission()");
+    //console.log(decodedEventLog)
 }
 
 module.exports.getAbiRegistObject             = _getAbiRegistObject;

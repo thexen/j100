@@ -4,17 +4,22 @@
 
 
 */
-const { AbiEncode }                   = require ( '../../utils/abi.js' );
-const { QueryChain }                  = require ( '../networks/active.js' );
+const { encodeAbi }                             = require ( '../utils/encoder/encoder.js' );
+const { GetRPC  }                               = require ( '../networks/provider.js' );
+const Web3                                      = require('web3');
+const web3                                      = new Web3( new Web3.providers.HttpProvider( GetRPC() ) );
+function _queryChain() {
+  return web3.eth;
+}
 
 async function _balanceOf( token, owner ) {
   try{
-    var data = await AbiEncode( "balanceOf(address)", owner );
-    const val = await QueryChain().call({
+    var data = await encodeAbi( "balanceOf(address)", owner );
+    const val = await _queryChain().call({
       to: token, 
       data: data,
     });
-    return QueryChain().abi.decodeParameters( ['uint256'], val );
+    return _queryChain().abi.decodeParameters( ['uint256'], val );
   } catch( e ) {
     console.log(e)
   } finally {
@@ -23,12 +28,12 @@ async function _balanceOf( token, owner ) {
 
 async function _symbol( token ) {
   try{
-      var data = QueryChain().abi.encodeFunctionSignature( "symbol()" );
-      const val = await QueryChain().call({
+      var data = _queryChain().abi.encodeFunctionSignature( "symbol()" );
+      const val = await _queryChain().call({
         to: token, 
         data: data,
       });
-      return QueryChain().abi.decodeParameters( ['string'], val );
+      return _queryChain().abi.decodeParameters( ['string'], val );
   } catch( e ) {
     console.log(e)
   } finally {
@@ -37,12 +42,12 @@ async function _symbol( token ) {
 
 async function _allowance( token, owner, spender ) {
   try{
-    var data = await AbiEncode( "allowance(address,address)", owner,spender );
-    const val = await QueryChain().call({
+    var data = await encodeAbi( "allowance(address,address)", owner,spender );
+    const val = await _queryChain().call({
       to: token, 
       data: data,
     });
-    return QueryChain().abi.decodeParameters( ['uint256'], val );
+    return _queryChain().abi.decodeParameters( ['uint256'], val );
   } catch( e ) {
     console.log(e)
   } finally {

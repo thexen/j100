@@ -4,6 +4,7 @@
 
 
 */
+const { UpsertToMongo }                       =  require ( '../../../../common/chains/mongo/call.js' );
 
 function _getAbiProposal() {
 
@@ -33,7 +34,7 @@ function _getAbiProposal() {
   return abi;
 } 
 
-function _proposal( eventLog, decodedEventLog ) {
+function _proposal( eventLog, decodedEventLog, mongoClient ) {
 
 }
 
@@ -57,7 +58,7 @@ function _getAbiInvoke() {
     return abi;
 }
 
-function _invoke( eventLog, decodedEventLog ) {
+function _invoke( eventLog, decodedEventLog, mongoClient ) {
 
 }
 

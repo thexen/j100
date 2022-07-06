@@ -4,6 +4,8 @@
 
 
 */
+const { UpsertToMongo }                       =  require ( '../../../../common/chains/mongo/call.js' );
+const { Symbol }                              =  require ( '../../inquery/erc20.js' );
 
 function _getAbiSetToken() {
 
@@ -34,9 +36,32 @@ function _getAbiSetToken() {
   return abi;
 }
 
-function _setToken( eventLog, decodedEventLog ) {
-  console.log("Called _setToken ................")
-  console.log(decodedEventLog)
+async function _setToken( eventLog, decodedEventLog, mongoClient ) {
+  console.log("ENTRY _setToken()");
+  
+  var symbol  = undefined;
+  var icon    = 'http://TODO.com';
+
+  if( decodedEventLog.token == '0x0000000000000000000000000000000000000000' ) {
+    symbol = 'klay';
+  } else {
+    symbol = await Symbol( decodedEventLog.token );
+    symbol = symbol[0];
+  }
+
+  let tokenInfo  = {
+    contract:   decodedEventLog.token,
+    symbol:     symbol,
+    icon:       icon,
+    grade:      decodedEventLog.weight,
+    block:      {
+      number: eventLog.blockNumber,
+      tx:     eventLog.transactionHash,
+    }
+  }  
+
+  await UpsertToMongo( mongoClient, 'tokens', decodedEventLog.index, tokenInfo );
+
 }
 
 module.exports.getAbiSetToken                       = _getAbiSetToken;
