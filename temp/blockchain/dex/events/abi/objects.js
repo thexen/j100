@@ -117,11 +117,11 @@ async function _registPermission( eventLog, decodedEventLog, mongoClient ) {
             tx:     eventLog.transactionHash,
         }
     }
-    
+
     var res = await FindToModify( mongoClient, 'counters',{_id: 'permissions'}, { seq: 1 }, { '$inc': {seq: 1} } )
     if( res.lastErrorObject.updatedExisting ) {
         await InsertToMongo( mongoClient, 'permissions', res.value.seq, permissionInfo );    
-    } 
+    }
     
 }
 

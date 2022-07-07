@@ -29,7 +29,25 @@ const abiEventMapper  = abiEventBuild( abiEventMappers.abiEventMapper_info );
   GToken
 */
 
+async function _inectionReg( log, decodedLog, mongoClient ) {
+  console.log("ENTRY _inectionReg()");
+
+}
+
+let injections = {
+  '../abi/objects.js': {
+        name: 'RegistObject',
+        invoke: _inectionReg
+  },
+  '../abi/swapPool.js': {
+      name: 'Statistics',
+      invoke: _inectionReg
+  }
+}
+
+
 async function subscribe( id, fromblockNumber, toblockNumber, contract, topics ) {
+
 
   //-------------------------------------------------------------
   var filters = {
@@ -49,7 +67,7 @@ async function subscribe( id, fromblockNumber, toblockNumber, contract, topics )
       });
     */
     for( var i=0; i<res.result.length; i++ ) {
-      await Logger(res.result[i], abiEventMapper, mongoClient );
+      await Logger(res.result[i], abiEventMapper, mongoClient, undefined ); //injections );
     }
     mongoClient.close();
     mongoClient = undefined;
@@ -58,67 +76,22 @@ async function subscribe( id, fromblockNumber, toblockNumber, contract, topics )
   }
 }
 
-
-
-/*
-//Objects 등록
-subscribe( 1, 95425355, 95425813
-                          , [ 
-                                '0x896aCc84F8215b43a4AEA1FA2BecFd2cea589DA1'    //Objects
-                              //, '0x6a8Ba3365271508171F38de33bD4087eBE55ce9E'    //TokenManager
-                              //, '0x3832a5C445c6fb5793D5287D720cc5AF88C63cD9'    //SwapPoolFactory                            
-                              //, '0x38799a6c39B77cA13562B77A222F488f05EE924d'    //SwapHelper
-                              //, '0x745699B50cE70AfC2DD80aC3525271F6fAdFAeff'    //DAO
-                              //, '0xaC062cC76FE249B0E0B6a942486FB0FC919c30D7'    //TeamVault
-                              //, '0x69b81B5F03E6Db66e4D8a4Fc9126542660157D12'    //GToken
-                            ]
-                          , undefined);
-*/
-
-/*
-//Token 등록
-subscribe( 1, 95425568, 95426241
-                          , [ 
-                                //'0x896aCc84F8215b43a4AEA1FA2BecFd2cea589DA1'    //Objects
-                               '0x6a8Ba3365271508171F38de33bD4087eBE55ce9E'    //TokenManager
-                              //, '0x3832a5C445c6fb5793D5287D720cc5AF88C63cD9'    //SwapPoolFactory                            
-                              //, '0x38799a6c39B77cA13562B77A222F488f05EE924d'    //SwapHelper
-                              //, '0x745699B50cE70AfC2DD80aC3525271F6fAdFAeff'    //DAO
-                              //, '0xaC062cC76FE249B0E0B6a942486FB0FC919c30D7'    //TeamVault
-                              //, '0x69b81B5F03E6Db66e4D8a4Fc9126542660157D12'    //GToken
-                            ]
-                          , undefined);                          
-*/
-
-/*
-subscribe( 1, 95426241, 95426288
-  , [ 
-        //'0x896aCc84F8215b43a4AEA1FA2BecFd2cea589DA1'    //Objects
-      //, '0x6a8Ba3365271508171F38de33bD4087eBE55ce9E'    //TokenManager
-       '0x3832a5C445c6fb5793D5287D720cc5AF88C63cD9'    //SwapPoolFactory                            
-      //, '0x38799a6c39B77cA13562B77A222F488f05EE924d'    //SwapHelper
-      //, '0x745699B50cE70AfC2DD80aC3525271F6fAdFAeff'    //DAO
-      //, '0xaC062cC76FE249B0E0B6a942486FB0FC919c30D7'    //TeamVault
-      //, '0x69b81B5F03E6Db66e4D8a4Fc9126542660157D12'    //GToken
-    ]
-  , undefined);                          
-*/
-
-//Objects 등록
-
-/*
+//Objects, TokenManager, SwapPoolFactory 등록
 subscribe( 1, 95425355, 95426288
   , [ 
         '0x896aCc84F8215b43a4AEA1FA2BecFd2cea589DA1'    //Objects
       , '0x6a8Ba3365271508171F38de33bD4087eBE55ce9E'    //TokenManager
       , '0x3832a5C445c6fb5793D5287D720cc5AF88C63cD9'    //SwapPoolFactory                            
+
       //, '0x38799a6c39B77cA13562B77A222F488f05EE924d'    //SwapHelper
       //, '0x745699B50cE70AfC2DD80aC3525271F6fAdFAeff'    //DAO
       //, '0xaC062cC76FE249B0E0B6a942486FB0FC919c30D7'    //TeamVault
       //, '0x69b81B5F03E6Db66e4D8a4Fc9126542660157D12'    //GToken
     ]
   , undefined);
-*/
+
+
+/*
 subscribe( 1, 95425355, 95426288
   , [ 
         '0x896aCc84F8215b43a4AEA1FA2BecFd2cea589DA1'    //Objects
@@ -130,7 +103,7 @@ subscribe( 1, 95425355, 95426288
       //, '0x69b81B5F03E6Db66e4D8a4Fc9126542660157D12'    //GToken
     ]
   , undefined);
-
+*/
 
 /*
 const addressObjects = encodeParams( ['address'], ['0x896acc84f8215b43a4aea1fa2becfd2cea589da1']);

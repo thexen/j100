@@ -25,13 +25,15 @@ function _building( _router ) {
   let   objs  = {};
   try{
     _router.forEach( function( item ) {
-      let dynimic = require ( item.file );
-      var abi     = dynimic[ item.abi ]();
+      let dynamic = require ( item.file );
+      var abi     = dynamic[ item.abi ]();
       var key     = Web3Utils.keccak256( abiEventCompile(abi) );
-      var data    = { name:      abi.name,
+      var data    = { 
+                      file:       item.file,
+                      name:       abi.name,
                       inputs:     abi.inputs,
-                      callBack:   dynimic[ item.event]
-    }
+                      event:      dynamic[ item.event ]
+                    }
     objs[key] = data ;
   })
   return objs;

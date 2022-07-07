@@ -6,7 +6,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 const { ErrorCodes }                             = require('../../common/types/ecodes');
-const { QueryFromMongo }                         = require( '../../common/chains/mongo/call.js' );
+const { NewMongoClient, QueryFromMongo }         = require( '../../common/chains/mongo/call.js' );
 
 var _searchQuery = async function( _req, _res ){
 
@@ -18,10 +18,14 @@ var _searchQuery = async function( _req, _res ){
   let bodyData              = "{}";
   let objs                  = undefined;
   
+  let mongoClient           = undefined;
+
   try {
 
-    objs        = await QueryFromMongo( collection, query );
+    mongoClient = await NewMongoClient();
+    objs        = await QueryFromMongo( mongoClient, collection, query );
     bodyData    = JSON.stringify( objs, null, 2 );
+    mongoClient.close();
 
   } catch(e) {
 
@@ -39,6 +43,7 @@ var _searchQuery = async function( _req, _res ){
     _res.setHeader('CCache-control', 'no-cache');
     _res.end( '{\"code\": ' + code + ',' + '\"reason\": \"' + reason + '\",'+ '\"data\": ' + bodyData + '}' );
 
+    mongoClient     = undefined;
     objs            = undefined;
     bodyData        = undefined;
 

@@ -5,7 +5,7 @@
 
 */
 const { UpsertToMongo }                       =  require ( '../../../../common/chains/mongo/call.js' );
-const { Symbol }                              =  require ( '../../inquery/erc20.js' );
+const { Symbol, Name }                        =  require ( '../../inquery/erc20.js' );
 
 function _getAbiSetToken() {
 
@@ -40,19 +40,26 @@ async function _setToken( eventLog, decodedEventLog, mongoClient ) {
   console.log("ENTRY _setToken()");
   
   var symbol  = undefined;
+  var name    = undefined;
   var icon    = 'http://TODO.com';
 
   if( decodedEventLog.token == '0x0000000000000000000000000000000000000000' ) {
-    symbol = 'klay';
+    symbol  = 'klay';
+    name    = 'klay';
   } else {
     symbol = await Symbol( decodedEventLog.token );
     symbol = symbol[0];
+    name   = await Name( decodedEventLog.token ); 
+    name   = name[0];
   }
 
   let tokenInfo  = {
-    contract:   decodedEventLog.token,
-    symbol:     symbol,
-    icon:       icon,
+    token: {
+      contract:   decodedEventLog.token,
+      symbol:     symbol,
+      name:       name,
+      icon:       icon,
+    },
     grade:      decodedEventLog.weight,
     block:      {
       number: eventLog.blockNumber,

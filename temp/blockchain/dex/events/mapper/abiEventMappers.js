@@ -11,7 +11,7 @@ module.exports = {
     { file: '../abi/sample.js',               abi: 'getAbi01',                  event: 'eventSampleCallBack01' }, 
     { file: '../abi/sample.js',               abi: 'getAbi02',                  event: 'eventSampleCallBack02' },     
     
-    //{ file: '../abi/objects.js',              abi: 'getAbiRegistObject',        event: 'eventRegistObject' }, 
+    { file: '../abi/objects.js',              abi: 'getAbiRegistObject',        event: 'eventRegistObject' }, 
     { file: '../abi/objects.js',              abi: 'getAbiRegistPermission',    event: 'eventRegistPermission' }, 
 
     { file: '../abi/swapPoolFactory.js',      abi: 'getAbiCreateSwapPool',      event: 'eventCreateSwapPool' }, 

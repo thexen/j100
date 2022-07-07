@@ -40,6 +40,21 @@ async function _symbol( token ) {
   }
 }
 
+async function _name( token ) {
+  try{
+      var data = _queryChain().abi.encodeFunctionSignature( "name()" );
+      const val = await _queryChain().call({
+        to: token, 
+        data: data,
+      });
+      return _queryChain().abi.decodeParameters( ['string'], val );
+  } catch( e ) {
+    console.log(e)
+  } finally {
+  }
+}
+
+
 async function _allowance( token, owner, spender ) {
   try{
     var data = await encodeAbi( "allowance(address,address)", owner,spender );
@@ -56,4 +71,5 @@ async function _allowance( token, owner, spender ) {
 
 module.exports.BalanceOf           = _balanceOf;
 module.exports.Symbol              = _symbol;
+module.exports.Name                = _name;
 module.exports.Allowance           = _allowance;

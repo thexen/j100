@@ -4,7 +4,7 @@
 
 
 */
-const { UpsertToMongo }                       =  require ( '../../../../common/chains/mongo/call.js' );
+const { UpsertToMongo, QueryFromMongo }                      =  require ( '../../../../common/chains/mongo/call.js' );
 
 function _getAbiCreateSwapPool() {
 
@@ -53,10 +53,26 @@ async function _createSwapPool( eventLog, decodedEventLog, mongoClient ) {
             second: 0,
             totalSupply: 0, //LPT 발행수    
       };
+
+      var query1 = {
+            findone: {
+                '_source.token.contract': decodedEventLog.firstToken,
+            }
+          }
+
+      var query2 = {
+            findone: {
+                '_source.token.contract': decodedEventLog.secondToken,
+            }
+          }          
+
+      var res1        = await QueryFromMongo( mongoClient, 'tokens', query1 );
+      var res2        = await QueryFromMongo( mongoClient, 'tokens', query2 );
+
       let swapPoolInfo  = {
             tokens: {
-                  first:          decodedEventLog.firstToken,
-                  second:         decodedEventLog.secondToken,
+                  first:          res1.token,  
+                  second:         res2.token
             },
             contracts: { 
                   sp:             decodedEventLog.sp,
