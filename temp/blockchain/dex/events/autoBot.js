@@ -6,7 +6,7 @@
 */
 const cron                                                      = require ( 'node-cron' );
 const { rpcRequest }                                            = require( '../utils/rpcRequest/rpcRequest.js' );
-const { NewMongoClient  }                                       =  require ( '../../../common/chains/mongo/call.js' );
+const { NewMongoClient  }                                       = require ( '../../../common/chains/mongo/call.js' );
 const { encodeParams }                                          = require( '../utils/encoder/encoder.js' );
 const { Logger }                                                = require ( './logger' );
 const { 
@@ -16,7 +16,7 @@ const {
 
 const {abiEventBuild}                                           = require ( './utils/abiBuilder.js' );
 const abiEventMappers                                           = require ( './mapper/abiEventMappers.js' );
-const abiEventMapper  = abiEventBuild( undefined, abiEventMappers.abiEventMapper_info );
+const abiEventMapper  = abiEventBuild( abiEventMappers.abiEventMapper_info );
 
 
 /*

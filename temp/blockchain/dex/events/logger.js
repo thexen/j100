@@ -4,12 +4,7 @@
 
 
 */
-
-const { 
-  GetRPC, 
-}                                                = require ( '../networks/provider.js' );
-const Web3                                       = require('web3');
-const web3                                       = new Web3( new Web3.providers.HttpProvider( GetRPC() ) );
+const Web3ABI                                    = require('web3-eth-abi');
 
 async function _txLogger( tx, abiEventMapper ) {
 
@@ -24,8 +19,8 @@ async function _txLogger( tx, abiEventMapper ) {
   tx.logs.forEach( function( item ) {
     try{
       //TODO item.address << contract address 이므로 유효한 contract 인지 확인 할 것
-      var topicMethod       =  web3.eth.abi.decodeLog( optsTopics, undefined, item.topics );
-      var decodedLog        =  web3.eth.abi.decodeLog( abiEventMapper[topicMethod.method].inputs, item.data, item.topics );
+      var topicMethod       =  Web3ABI.decodeLog( optsTopics, undefined, item.topics );
+      var decodedLog        =  Web3ABI.decodeLog( abiEventMapper[topicMethod.method].inputs, item.data, item.topics );
       abiEventMapper[topicMethod.method].callBack( item, decodedLog );
     } catch( e ) {
     }
@@ -46,9 +41,9 @@ async function _logger( log, abiEventMapper, mongoClient ) {
   try{
 
     //TODO item.address << contract address 이므로 유효한 contract 인지 확인 할 것
-    var topicMethod       =  web3.eth.abi.decodeLog( optsTopics, undefined, log.topics );
+    var topicMethod       =  Web3ABI.decodeLog( optsTopics, undefined, log.topics );
     if( abiEventMapper[topicMethod.method] != undefined ) {
-      var decodedLog        =  web3.eth.abi.decodeLog( abiEventMapper[topicMethod.method].inputs, log.data, log.topics );
+      var decodedLog        =  Web3ABI.decodeLog( abiEventMapper[topicMethod.method].inputs, log.data, log.topics );
       await abiEventMapper[topicMethod.method].callBack( log, decodedLog, mongoClient );
     }
   } catch( e ) {

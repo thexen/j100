@@ -5,9 +5,10 @@
 
 */
 
-const Web3                                                      = require('web3');
-const { GetRPC }                                                = require ( '../../networks/provider.js' );
 const { abiEventCompile }                                       = require ( './abiCompiler.js' );
+const Web3Utils                                                 = require('web3-utils');
+
+
 
 /*
   SwapPoolFactory
@@ -19,20 +20,14 @@ const { abiEventCompile }                                       = require ( './a
   GToken
 */
 
-function _building( _web3, _router ) {
-  let   web3  = undefined;
+function _building( _router ) {
+
   let   objs  = {};
-
-  if( _web3 == undefined )
-    web3 = new Web3( new Web3.providers.HttpProvider( GetRPC() ) );
-  else 
-    web3 = _web3;
-
   try{
     _router.forEach( function( item ) {
       let dynimic = require ( item.file );
-      var abi     = dynimic[item.abi ]();
-      var key     = web3.utils.keccak256( abiEventCompile(abi) );
+      var abi     = dynimic[ item.abi ]();
+      var key     = Web3Utils.keccak256( abiEventCompile(abi) );
       var data    = { name:      abi.name,
                       inputs:     abi.inputs,
                       callBack:   dynimic[ item.event]
