@@ -11,6 +11,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "body-parser": "^1.15.2",
+    "Buffer": "^0.0.0",
     "caver-js": "^1.8.1",
     "child_process": "^1.0.2",
     "connect-flash": "^0.1.1",

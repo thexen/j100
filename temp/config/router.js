@@ -9,6 +9,9 @@ module.exports = {
     {file:'./metadata/dumy',          path:'/metadata/dumy',            method:'dumy',            type:'post'},
 
     {file:'./restapi/query',          path:'/restapi/search/query',     method:'searchQuery',     type:'post'},
+    {file:'./restapi/update',         path:'/restapi/update/query',     method:'updateQuery',     type:'post'},
+
+    {file:'./ipfs/ipfs',              path:'/ipfs/get/:CID',           method:'ipfsGetFile',      type:'get'},
 
   ],
   doRelease : function(connection)

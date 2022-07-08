@@ -5,22 +5,28 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-const { ErrorCodes }                                            = require('../../common/types/ecodes');
-const { UpsertToMongo, QueryFromMongo }                         = require ( '../../common/chains/mongo/call.js' );
+const { ErrorCodes }                             = require('../../common/types/ecodes');
+const { NewMongoClient, UpdateFromMongo }        = require( '../../common/chains/mongo/call.js' );
 
-var _findSwapPools = async function( _req, _res ){
+var _updateQuery = async function( _req, _res ){
 
+  let collection            = _req.body.collection;
   let query                 = _req.body.query;
+  let update                = _req.body.update;
 
   let reason                = "";
   let code                  = ErrorCodes.OK;
   let bodyData              = "{}";
   let objs                  = undefined;
   
+  let mongoClient           = undefined;
+
   try {
 
-    objs        = await QueryFromMongo( "swappools", query );
-    bodyData    = JSON.stringify( objs, null, 2 );
+    mongoClient = await NewMongoClient();
+    objs        = await UpdateFromMongo( mongoClient, collection, query, update );
+    bodyData    = JSON.stringify( objs.result, null, 2 );
+    mongoClient.close();
 
   } catch(e) {
 
@@ -38,12 +44,12 @@ var _findSwapPools = async function( _req, _res ){
     _res.setHeader('CCache-control', 'no-cache');
     _res.end( '{\"code\": ' + code + ',' + '\"reason\": \"' + reason + '\",'+ '\"data\": ' + bodyData + '}' );
 
+    mongoClient     = undefined;
     objs            = undefined;
     bodyData        = undefined;
 
   }
-  
 
 }
 
-module.exports.findSwapPools = _findSwapPools;
+module.exports.updateQuery = _updateQuery;
