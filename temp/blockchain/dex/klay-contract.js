@@ -223,7 +223,7 @@ async function main06() {
   console.log( res2 );
 
 }
-main06();
+//main06();
 
 //sync swap pool to mongoDB
 async function main07() {
@@ -457,3 +457,6 @@ async function main11() {
 
 }
 //main11();
+
+
+console.log( 3000000 / 1000000000 ); //0.3

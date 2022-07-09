@@ -24,11 +24,11 @@ var _searchQuery = async function( _req, _res ){
 
     mongoClient = await NewMongoClient();
     objs        = await QueryFromMongo( mongoClient, collection, query );
+    console.log( objs.length )
     bodyData    = JSON.stringify( objs, null, 2 );
     mongoClient.close();
 
   } catch(e) {
-
     reason = e.message.replace( /\"/g, "'" );
     if (e.code == undefined ){
       code = ErrorCodes.UTIL_GENAUTH

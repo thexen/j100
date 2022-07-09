@@ -20,7 +20,7 @@ const mongoHost = 'mongodb://192.168.10.111:27017/dex_db';
 const mongoUser = "dexUser";
 const mongoPwd  = "dexUser";
 const mongoConnTimeout  = 5000;
-const mongoConnPool     = 100;
+const mongoConnPool     = 5;
 const mongoReplicaSet   = 'rs0'
 
 /*
@@ -56,7 +56,7 @@ const client = new MongoClient( MONGODBCONF.datasource, {
 */
 
 async function _newClient() {
-    const client = new MongoClient(mongoHost, {
+    const client = await new MongoClient(mongoHost, {
         authSource: 'admin',
         auth: {
             user:                   mongoUser, 
@@ -70,6 +70,9 @@ async function _newClient() {
         serverSelectionTimeoutMS:   mongoConnTimeout
     });
     await client.connect();
+    if( !client.isConnected() ){
+        console.log('not conntctions')
+    }
     return client;    
 }
 
@@ -179,7 +182,7 @@ async function _queryFromFromMongo( client, _collection, _dslQuery ) {
                     }
                 }
             }
-            cursor = collection.find( _dslQuery.find );
+            let cursor = collection.find( _dslQuery.find );
             if( await cursor.count() == 0 ){
                 return undefined
             }
