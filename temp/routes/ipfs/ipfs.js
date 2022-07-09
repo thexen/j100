@@ -25,7 +25,7 @@ var _ipfsGetFile = async function( _req, _res ){
     _res.end( files[0].content );
     
   } catch(e) {
-    res.statusCode = 501;
+    _res.statusCode = 501;
   } finally {
   }
 
