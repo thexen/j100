@@ -6,7 +6,7 @@ const app = express();
 //Connceting to the ipfs network via infura gateway
 const ipfs = ipfsAPI('ipfs.infura.io', '5001', {protocol: 'https'})
 
-/*
+
 //Reading file from computer
 //let testFile = fs.readFileSync("D:/doc/icon/com.publishinc.app.publishid_1.png");
 let testFile = fs.readFileSync("C:\\Users\\xen\\Documents\\ElminintraMessenger\\klay.svg");
@@ -25,7 +25,7 @@ console.log(">>>>>>>>>>>>>>>");
       })
       res.statusCode = 200;
 })
-*/
+
 //Getting the uploaded file via hash code.
 app.get('/getfile/:CID', function(req, res) {
     
