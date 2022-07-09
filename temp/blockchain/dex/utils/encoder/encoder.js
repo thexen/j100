@@ -5,11 +5,11 @@
 
 */
 const Web3ABI                                    = require('web3-eth-abi');
-
+const EtherAbi                                   = require('ethereumjs-abi')
 function _encodeAbi( signature, ...args ) {
 
   try{
-    return '0x' + Web3ABI.simpleEncode( signature, ...args ).toString('hex');
+    return '0x' + EtherAbi.simpleEncode( signature, ...args ).toString('hex');
   }catch(e){
     console.log( e )
   }finally{
