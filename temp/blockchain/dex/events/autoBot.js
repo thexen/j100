@@ -48,7 +48,6 @@ let injections = {
 
 async function subscribe( id, fromblockNumber, toblockNumber, contract, topics ) {
 
-
   //-------------------------------------------------------------
   var filters = {
       fromBlock:  fromblockNumber,
