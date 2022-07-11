@@ -76,7 +76,8 @@ async function subscribe( id, fromblockNumber, toblockNumber, contract, topics )
 }
 
 //Objects, TokenManager, SwapPoolFactory 등록
-subscribe( 1, 95425355, 95426288
+//subscribe( 1, 95425355, 95426288  //처음 부터 ---
+subscribe( 1, 95773558, 95774008    //4번째 Swap Pool
   , [ 
         '0x896aCc84F8215b43a4AEA1FA2BecFd2cea589DA1'    //Objects
       , '0x6a8Ba3365271508171F38de33bD4087eBE55ce9E'    //TokenManager

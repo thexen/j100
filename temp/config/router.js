@@ -11,7 +11,9 @@ module.exports = {
     {file:'./restapi/query',          path:'/restapi/search/query',     method:'searchQuery',     type:'post'},
     {file:'./restapi/update',         path:'/restapi/update/query',     method:'updateQuery',     type:'post'},
 
-    {file:'./ipfs/ipfs',              path:'/ipfs/get/:CID',           method:'ipfsGetFile',      type:'get'},
+    {file:'./ipfs/ipfs',              path:'/ipfs/get/:CID',            method:'ipfsGetFile',     type:'get'},
+    {file:'./ipfs/ipfs',              path:'/ipfs/gateway',             method:'ipfsGeteway',     type:'get'},
+    {file:'./ipfs/ipfs',              path:'/ipfs/transfer/v0tov1',     method:'ipfsCID2CIDV1',   type:'post'},
 
   ],
   doRelease : function(connection)
