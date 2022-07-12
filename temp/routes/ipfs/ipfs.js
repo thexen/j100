@@ -105,7 +105,7 @@ var _ipfsGateway = async function( _req, _res ) {
   try {
     objs = {
       gateways: [
-        { gateway: 'ipfs.infura-ipfs.io/',        version: 'v1'},
+        { gateway: 'ipfs.infura-ipfs.io/',        version: 'v1' },
         { gateway: '127.0.0.1:8080/ipfs/get/',    version: 'v0' }
        ],
     };

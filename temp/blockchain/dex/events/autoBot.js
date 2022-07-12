@@ -105,13 +105,15 @@ subscribe( 1, 95425355, 95426288
   , undefined);
 */
 
+
 /*
+//topics[1] 즉 두번째 value의 indexed 가 0x896acc84f8215b43a4aea1fa2becfd2cea589da1 인 event를 전체 조회 한다
 const addressObjects = encodeParams( ['address'], ['0x896acc84f8215b43a4aea1fa2becfd2cea589da1']);
 subscribe( 1, 95427037, 95427037//95335966, 95335966
                           , undefined
-                          , [ 
-                              [],
-                              addressObjects
+                          , [
+                              [],               //첫번째 topics = function 이름과 파라미터 정보 등(function 이름과 무관하게 조회)
+                              addressObjects    //두번째 topics
                           ] );
 */
 
