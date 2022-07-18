@@ -49,12 +49,12 @@ let injections = {
 async function subscribe( id, fromblockNumber, toblockNumber, contract, topics ) {
 
   //-------------------------------------------------------------
-  var filters = {
+  var filters = [{
       fromBlock:  fromblockNumber,
       toBlock:    toblockNumber,
       address:    contract,
       topics:     topics,
-  };
+  }];
 
   try{
     // get logs
