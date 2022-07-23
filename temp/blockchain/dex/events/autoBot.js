@@ -75,6 +75,7 @@ async function subscribe( id, fromblockNumber, toblockNumber, contract, topics )
   }
 }
 
+/*
 //Objects, TokenManager, SwapPoolFactory 등록
 //subscribe( 1, 95425355, 95426288  //처음 부터 ---
 subscribe( 1, 95773558, 95774008    //4번째 Swap Pool
@@ -89,6 +90,7 @@ subscribe( 1, 95773558, 95774008    //4번째 Swap Pool
       //, '0x69b81B5F03E6Db66e4D8a4Fc9126542660157D12'    //GToken
     ]
   , undefined);
+*/  
 
 
 /*
@@ -106,16 +108,15 @@ subscribe( 1, 95425355, 95426288
 */
 
 
-/*
 //topics[1] 즉 두번째 value의 indexed 가 0x896acc84f8215b43a4aea1fa2becfd2cea589da1 인 event를 전체 조회 한다
 const addressObjects = encodeParams( ['address'], ['0x896acc84f8215b43a4aea1fa2becfd2cea589da1']);
-subscribe( 1, 95427037, 95427037//95335966, 95335966
+subscribe( 1, 96974725, 96978351//95335966, 95335966
                           , undefined
                           , [
                               [],               //첫번째 topics = function 이름과 파라미터 정보 등(function 이름과 무관하게 조회)
                               addressObjects    //두번째 topics
                           ] );
-*/
+
 
 //subscribe( 1, 95153614, 95154614, [ '0xC2FDEa5647C0bf3F19a049Fb95f4A58BfdFf044D'
 //                            , '0x632CFFf2560603D46EeD6D1cbEFF3fc2Fa8aACc8'
